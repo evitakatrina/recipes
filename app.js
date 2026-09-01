@@ -544,14 +544,6 @@
     const y = calMonth.getFullYear(), m = calMonth.getMonth();
     $("calTitle").textContent = calMonth.toLocaleDateString(undefined, { month:"long", year:"numeric" });
 
-    const hint = $("calHint");
-    if (armedDate) {
-      hint.textContent = "Pick a recipe for " + prettyDate(armedDate) + ". Open Browse or Spin, then tap Plan.";
-      hint.classList.add("armed");
-    } else {
-      hint.textContent = "Tap a day to plan a meal for it. Tap a planned day to open the recipe.";
-      hint.classList.remove("armed");
-    }
 
     const grid = $("calGrid");
     grid.innerHTML = "";
@@ -680,7 +672,6 @@
 
   function setupWheel() {
     const deck = $("deck");
-    const caption = $("deckCaption");
     let meal = MEALS[0];
     let pantryOnly = false;
     let pool = RECIPES;
@@ -750,18 +741,7 @@
       updateHint();
     }
 
-    function updateHint() {
-      if (armedDate) {
-        $("spinHint").textContent = "Choosing a meal for " + prettyDate(armedDate)
-          + ". Spin, then tap Plan in the recipe.";
-        $("spinHint").classList.add("armed");
-        return;
-      }
-      $("spinHint").classList.remove("armed");
-      const scope = meal.cats ? meal.label.toLowerCase() + " recipes" : "recipes";
-      $("spinHint").textContent = "Deals from " + pool.length + " " + scope +
-        (pantryOnly ? " you can mostly make" : "") + ". Tap again to stop it early.";
-    }
+    function updateHint() {}
 
     function buildMealRow() {
       const row = $("mealRow");
@@ -781,8 +761,6 @@
           meal = m;
           [...row.children].forEach(c => c.setAttribute("aria-selected", c === chip ? "true" : "false"));
           resetFan();
-          caption.className = "deck-caption";
-          caption.textContent = "Tap spin to deal a recipe";
           $("spinBtn").textContent = "Spin";
           recomputePool();
           announce(pool.length + " " + m.label.toLowerCase() + " recipes to spin");
@@ -802,7 +780,6 @@
       slots[mid].el.classList.add("is-winner");
       // the winning card already carries the name - repeating it above the fan
       // was the same string twice on one screen
-      caption.className = "deck-caption is-result";
       $("spinBtn").textContent = "Spin again";
       announce("Spin landed on " + chosen.name);
       setTimeout(() => { if (!spinning) openSheet(chosen, $("spinBtn")); }, 620);
@@ -824,8 +801,6 @@
 
       spinning = true;
       resetFan();
-      caption.className = "deck-caption";
-      caption.textContent = "Dealing\u2026";
       deck.classList.add("spinning");
 
       // riffle: jitter every card's angle and swap faces on a short interval

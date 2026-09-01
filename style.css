@@ -342,7 +342,6 @@ a{color:inherit;text-decoration:none}
 .chip[aria-pressed="true"] .tick svg{opacity:1}
 
 /* ============================ pantry ============================ */
-.pantry-intro{padding:2px 20px 4px;color:var(--fg-2);font-size:var(--t-md);max-width:52ch}
 .pantry-bar{
   position:sticky; top:0; z-index:5;
   display:flex;gap:10px;align-items:center;
@@ -560,11 +559,7 @@ a{color:inherit;text-decoration:none}
 }
 .meal-row .chip[aria-selected="true"] .n{color:var(--accent-ink);opacity:.75}
 
-.spin-actions{padding:16px 20px 0}
-.hint{
-  padding:14px 20px 0;color:var(--fg-3);
-  font-size:var(--t-sm);line-height:1.45;max-width:46ch;
-}
+.spin-actions{padding:20px 20px 0}
 
 .switch-row{
   display:flex;align-items:center;justify-content:space-between;gap:16px;
@@ -837,7 +832,7 @@ a{color:inherit;text-decoration:none}
 /* ============================ plan ============================ */
 .cal-head{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:2px 20px 6px;
+  padding:2px 20px 14px;
 }
 .cal-title{
   font-family:var(--display);font-weight:800;
@@ -848,9 +843,6 @@ a{color:inherit;text-decoration:none}
   display:grid;place-items:center;color:var(--fg-2);
 }
 .cal-nav svg{width:18px;height:18px}
-.cal-hint{padding:0 20px 12px;font-size:var(--t-sm);color:var(--fg-3);max-width:46ch}
-.cal-hint.armed{color:var(--accent);font-weight:600}
-.hint.armed{color:var(--accent);font-weight:600}
 .cal-dow{
   display:grid;grid-template-columns:repeat(7,1fr);gap:6px;
   padding:0 18px 10px;
@@ -946,9 +938,8 @@ a{color:inherit;text-decoration:none}
 }
 
 /* ============================ my kitchen ============================ */
-.kit{padding:0 0 8px}
+.kit{padding:6px 0 8px}
 .kit-title{cursor:default}
-.kit-hint{padding:0 20px 12px;font-size:var(--t-sm);color:var(--fg-3);max-width:48ch}
 .kit-row{display:flex;gap:8px;overflow-x:auto;padding:0 20px 16px;scrollbar-width:none;border-bottom:1px solid var(--line);margin:0 20px;padding-inline:0}
 .kit-row::-webkit-scrollbar{display:none}
 .kit-chip{

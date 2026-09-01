@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Instrument+Sans:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="style.css?v=20260901190229">
+<link rel="stylesheet" href="style.css?v=20260901190648">
 </head>
 <body>
 
@@ -77,13 +77,11 @@
     <section class="view" id="view-wheel" hidden aria-labelledby="tab-wheel">
       <div class="deck-stage">
         <div class="deck" id="deck"></div>
-        <span class="deck-caption" id="deckCaption">Tap spin to deal a recipe</span>
       </div>
       <div class="meal-row" id="mealRow" role="tablist" aria-label="Meal"></div>
       <div class="spin-actions">
         <button class="btn btn-primary btn-block btn-big" id="spinBtn" type="button">Spin</button>
       </div>
-      <p class="hint" id="spinHint"></p>
       <label class="switch-row">
         <span class="switch-text">
           <span class="switch-title">Match my pantry</span>
@@ -111,7 +109,6 @@
           <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
         </button>
       </div>
-      <p class="cal-hint" id="calHint"></p>
       <div class="cal-dow" id="calDow"></div>
       <div class="cal-grid" id="calGrid"></div>
       <div class="day-panel" id="dayPanel" hidden>
@@ -134,7 +131,6 @@
 
     <!-- ============ PANTRY ============ -->
     <section class="view" id="view-pantry" hidden aria-labelledby="tab-pantry">
-      <p class="pantry-intro">Tap what you keep on hand. Sift uses it to work out what you can cook right now, and builds your shopping list from what's missing.</p>
       <div class="pantry-bar">
         <input class="search" id="pantrySearch" type="search" placeholder="Search ingredients" aria-label="Search ingredients">
         <span class="pantry-count" id="pantryCount"></span>
@@ -144,7 +140,6 @@
           <span class="label">My kitchen</span>
           <span class="group-count" id="kitCount"></span>
         </h2>
-        <p class="kit-hint">Turn off anything you don't have. Recipes that need it are hidden everywhere.</p>
         <div class="kit-row" id="kitRow"></div>
       </section>
       <div id="pantryGroups"></div>
@@ -317,7 +312,7 @@
 
 <div class="visually-hidden" id="liveRegion" role="status" aria-live="polite"></div>
 
-<script src="icons.js?v=20260901190229"></script>
-<script src="app.js?v=20260901190229"></script>
+<script src="icons.js?v=20260901190648"></script>
+<script src="app.js?v=20260901190648"></script>
 </body>
 </html>
