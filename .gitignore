@@ -1,0 +1,4 @@
+# local safety copies made while iterating
+.backup-*/
+# macOS
+.DS_Store

@@ -1,0 +1,816 @@
+/* ==========================================================================
+   Sift — editorial identity, light by default
+   Warm paper ground. One hot accent. Photography does the talking.
+   Type:   Archivo (display, tight + heavy) / Instrument Sans (UI)
+   A dark appearance is defined from the same tokens for people whose
+   system asks for it.
+   ========================================================================== */
+
+:root{
+  /* --- light: the default appearance --- */
+  --ground:#F4F2EE;
+  --surface:#FFFFFF;
+  --raised:#FFFFFF;
+  --sunk:#E8E5DF;
+  --line:rgba(24,20,16,.12);
+  --line-strong:rgba(24,20,16,.28);
+
+  --fg:#14120F;
+  --fg-2:#57534C;
+  --fg-3:#6F6C65;
+
+  --accent:#C42D14;
+  --accent-press:#A62410;
+  --accent-ink:#FFFFFF;
+  --accent-soft:rgba(196,45,20,.09);
+
+  --have:#2E7D45;
+  --have-soft:rgba(46,125,69,.11);
+
+  --shadow:0 1px 2px rgba(28,22,16,.05), 0 12px 30px rgba(28,22,16,.09);
+  --shadow-lift:0 2px 6px rgba(28,22,16,.09), 0 24px 50px rgba(28,22,16,.16);
+
+  --r-lg:22px;
+  --r-md:14px;
+  --r-sm:9px;
+
+  --shadow:0 2px 6px rgba(0,0,0,.4), 0 18px 44px rgba(0,0,0,.5);
+
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --ui:"Instrument Sans",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+
+  /* type scale — rem, so it answers the reader's font-size setting */
+  --t-2xs:.6875rem;   /* 11 */
+  --t-xs:.75rem;      /* 12 */
+  --t-sm:.8125rem;    /* 13 */
+  --t-md:.875rem;     /* 14 */
+  --t-base:.9375rem;  /* 15 */
+  --t-lg:1.0625rem;   /* 17 */
+  --t-xl:1.375rem;    /* 22 */
+  --t-2xl:1.875rem;   /* 30 */
+  --t-3xl:2.625rem;   /* 42 */
+
+  --tab-h:60px;
+  color-scheme:light dark;
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0F0E0D;
+    --surface:#191817;
+    --raised:#221F1D;
+    --sunk:#0A0908;
+    --line:rgba(255,255,255,.12);
+    --line-strong:rgba(255,255,255,.24);
+
+    --fg:#F5F2ED;
+    --fg-2:#ABA69E;
+    --fg-3:#8C877E;
+
+    --accent:#FF5B3D;
+    --accent-press:#E64828;
+    --accent-ink:#12100E;
+    --accent-soft:rgba(255,91,61,.15);
+
+    --have:#7BC98D;
+    --have-soft:rgba(123,201,141,.15);
+
+    --shadow:0 2px 6px rgba(0,0,0,.42), 0 18px 44px rgba(0,0,0,.52);
+    --shadow-lift:0 4px 12px rgba(0,0,0,.5), 0 28px 60px rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+    --ground:#0F0E0D;
+    --surface:#191817;
+    --raised:#221F1D;
+    --sunk:#0A0908;
+    --line:rgba(255,255,255,.12);
+    --line-strong:rgba(255,255,255,.24);
+
+    --fg:#F5F2ED;
+    --fg-2:#ABA69E;
+    --fg-3:#8C877E;
+
+    --accent:#FF5B3D;
+    --accent-press:#E64828;
+    --accent-ink:#12100E;
+    --accent-soft:rgba(255,91,61,.15);
+
+    --have:#7BC98D;
+    --have-soft:rgba(123,201,141,.15);
+
+    --shadow:0 2px 6px rgba(0,0,0,.42), 0 18px 44px rgba(0,0,0,.52);
+    --shadow-lift:0 4px 12px rgba(0,0,0,.5), 0 28px 60px rgba(0,0,0,.6);
+    color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+/* a class that sets display must not out-specify the hidden attribute */
+[hidden]{display:none !important}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  min-height:100dvh;
+  background:var(--ground);
+  color:var(--fg);
+  font-family:var(--ui);
+  font-size:var(--t-base);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overscroll-behavior-y:none;
+}
+h1,h2,h3,p,ul,figure{margin:0}
+ul{list-style:none;padding:0}
+img{display:block;max-width:100%}
+button{font:inherit;color:inherit;border:none;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
+
+/* every interactive thing gets a visible keyboard state */
+:where(a,button,input,[tabindex]):focus-visible{
+  outline:2.5px solid var(--accent);
+  outline-offset:3px;
+  border-radius:5px;
+}
+.visually-hidden{
+  position:absolute;width:1px;height:1px;margin:-1px;padding:0;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
+/* ============================ shell ============================ */
+.app{
+  max-width:620px;
+  margin:0 auto;
+  min-height:100dvh;
+  padding-bottom:calc(var(--tab-h) + env(safe-area-inset-bottom) + 18px);
+  position:relative;
+  isolation:isolate;
+}
+
+.topbar{
+  position:sticky; top:0; z-index:20;
+  display:flex; align-items:baseline; justify-content:space-between; gap:14px;
+  padding:calc(16px + env(safe-area-inset-top)) 20px 14px;
+  background:linear-gradient(to bottom,var(--ground) 62%,transparent);
+}
+.brand{
+  font-family:var(--display);
+  font-weight:800; font-size:var(--t-xl);
+  letter-spacing:-.045em; line-height:1;
+}
+.brand em{font-style:normal;color:var(--accent)}
+.today{
+  font-size:var(--t-xs); color:var(--fg-2);
+  letter-spacing:.02em; text-align:right;
+}
+
+.content{padding:6px 0 8px}
+.view[hidden]{display:none}
+.pad{padding-inline:20px}
+
+.section-head{
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  padding:34px 20px 14px;
+}
+.section-title{
+  font-family:var(--display);
+  font-weight:800; font-size:var(--t-xl);
+  letter-spacing:-.035em; line-height:1.05;
+  text-wrap:balance;
+}
+.section-meta{font-size:var(--t-xs);color:var(--fg-3);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* ======================= hero (recipe of the day) ======================= */
+.hero{
+  position:relative; display:block; width:100%;
+  text-align:left; padding:0;
+  margin:2px 20px 0; width:calc(100% - 40px);
+  border-radius:var(--r-lg); overflow:hidden;
+  aspect-ratio:4/5; background:var(--surface);
+  box-shadow:var(--shadow);
+}
+.hero-img{width:100%;height:100%;object-fit:cover}
+.hero::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.10) 0%,rgba(0,0,0,0) 34%,rgba(0,0,0,.62) 72%,rgba(0,0,0,.88) 100%);
+}
+.hero-text{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:24px 22px 26px;color:#fff}
+.eyebrow{
+  display:inline-block;
+  font-size:var(--t-2xs); font-weight:600;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:var(--accent);
+}
+.hero h1{
+  font-family:var(--display);
+  font-weight:800; font-size:var(--t-3xl);
+  letter-spacing:-.045em; line-height:.96;
+  margin:10px 0 10px; text-wrap:balance;
+  color:#fff;
+}
+.hero-meta{font-size:var(--t-sm);color:rgba(255,255,255,.78)}
+.hero-match{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-top:12px;padding:5px 10px;border-radius:100px;
+  background:rgba(255,255,255,.15);backdrop-filter:blur(8px);
+  font-size:var(--t-xs);font-weight:600;color:#fff;
+}
+.hero:active{transform:scale(.993)}
+.hero{transition:transform .18s ease}
+
+/* ============================ rails ============================ */
+/* horizontal card rails. The marquee rail drifts on its own; both
+   scroll by hand, and both stop dead under prefers-reduced-motion. */
+.rail{
+  display:flex; gap:12px;
+  overflow-x:auto; scroll-snap-type:x mandatory;
+  padding:2px 20px 10px;
+  scrollbar-width:none; -webkit-overflow-scrolling:touch;
+}
+.rail::-webkit-scrollbar{display:none}
+.rail > *{scroll-snap-align:start}
+
+.marquee{
+  position:relative; overflow:hidden;
+  padding:2px 0 10px;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+}
+.marquee-track{
+  display:flex; gap:12px; width:max-content;
+  animation:drift 320s linear infinite;
+  will-change:transform;
+}
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track{animation-play-state:paused}
+@keyframes drift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+
+/* ============================ cards ============================ */
+.card{
+  position:relative; display:block; text-align:left; padding:0;
+  flex:0 0 168px; width:168px;
+  border-radius:var(--r-md); overflow:hidden;
+  background:var(--surface);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  transition:transform .2s cubic-bezier(.2,.8,.2,1);
+}
+.card:active{transform:scale(.97)}
+.card-img{width:100%;aspect-ratio:1/1;object-fit:cover;background:var(--raised);display:block}
+/* if a publisher's image fails, the card keeps its shape and says so */
+.card-fallback{
+  width:100%;aspect-ratio:1/1;
+  display:grid;place-items:center;
+  background:
+    repeating-linear-gradient(45deg, var(--raised) 0 10px, var(--surface) 10px 20px);
+  color:var(--fg-3);
+}
+.card-fallback svg{width:26px;height:26px;opacity:.7}
+.grid .card-fallback{aspect-ratio:4/3}
+.card-body{padding:11px 12px 13px}
+.card-name{
+  font-weight:600; font-size:var(--t-sm); line-height:1.25;
+  letter-spacing:-.01em;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.card-sub{margin-top:5px;font-size:var(--t-2xs);color:var(--fg-3)}
+.card-sub.is-match{color:var(--have);font-weight:600}
+
+/* browse grid */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;padding:0 20px}
+.grid .card{flex:none;width:100%}
+.grid .card-img{aspect-ratio:4/3}
+
+.empty{
+  padding:2px 20px 18px;
+  font-size:var(--t-md);color:var(--fg-2);max-width:44ch;
+}
+.empty b{color:var(--fg);font-weight:600}
+
+/* skeletons while recipes.json loads */
+.skeleton{background:var(--raised);border-radius:var(--r-md);position:relative;overflow:hidden}
+.skeleton::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);
+  animation:sweep 1.3s ease-in-out infinite;
+}
+@keyframes sweep{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.skeleton-hero{margin:2px 20px 0;width:calc(100% - 40px);aspect-ratio:4/5;border-radius:var(--r-lg)}
+.skeleton-card{flex:0 0 168px;width:168px;height:232px}
+
+/* error state */
+.error-box{
+  margin:20px; padding:22px;
+  border:1px solid var(--line); border-radius:var(--r-md);
+  background:var(--surface);
+}
+.error-box h2{font-family:var(--display);font-weight:800;font-size:var(--t-lg);letter-spacing:-.03em;margin-bottom:8px}
+.error-box p{color:var(--fg-2);font-size:var(--t-md);margin-bottom:16px}
+
+/* ============================ chips ============================ */
+.chip-row{
+  display:flex;gap:8px;overflow-x:auto;
+  padding:2px 20px 16px;scrollbar-width:none;
+}
+.chip-row::-webkit-scrollbar{display:none}
+.chip{
+  flex-shrink:0;
+  min-height:44px; padding:0 17px;
+  display:inline-flex;align-items:center;gap:7px;
+  border-radius:100px;
+  background:var(--surface); border:1px solid var(--line);
+  color:var(--fg-2);
+  font-size:var(--t-sm);font-weight:500;
+  white-space:nowrap;
+  transition:background .16s ease,color .16s ease,border-color .16s ease;
+}
+.chip[aria-pressed="true"],.chip[aria-selected="true"]{
+  background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600;
+}
+/* pantry chips carry a check, so state is never colour alone */
+.chip .tick{
+  width:15px;height:15px;flex:none;
+  border-radius:50%;border:1.5px solid var(--line-strong);
+  display:grid;place-items:center;
+}
+.chip .tick svg{width:9px;height:9px;opacity:0;transition:opacity .12s ease}
+.chip[aria-pressed="true"] .tick{background:var(--accent-ink);border-color:var(--accent-ink);color:var(--accent)}
+.chip[aria-pressed="true"] .tick svg{opacity:1}
+
+/* ============================ pantry ============================ */
+.pantry-intro{padding:2px 20px 4px;color:var(--fg-2);font-size:var(--t-md);max-width:52ch}
+.pantry-bar{
+  position:sticky; top:0; z-index:5;
+  display:flex;gap:10px;align-items:center;
+  padding:12px 20px 14px;
+  background:linear-gradient(to bottom,var(--ground) 70%,transparent);
+}
+.search{
+  flex:1; min-height:44px;
+  padding:0 15px; border-radius:var(--r-md);
+  background:var(--surface); border:1px solid var(--line);
+  color:var(--fg); font-size:var(--t-md); font-family:inherit;
+}
+.search::placeholder{color:var(--fg-3)}
+.pantry-count{
+  font-size:var(--t-xs);color:var(--fg-2);white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+/* Each group is a shelf: a horizontal rail of jars and produce with a
+   hairline shelf edge under it. Search is what makes 139 items findable;
+   the shelves are for browsing. */
+.pantry-group{padding:0 0 22px}
+.pantry-group[hidden]{display:none}
+/* Each shelf header is a disclosure control: collapsed it scrolls sideways,
+   expanded it wraps so a whole group can be scanned at once. */
+.group-title{
+  display:flex;align-items:center;gap:10px;
+  width:calc(100% - 40px);margin:0 20px 12px;
+  padding:8px 0;min-height:44px;
+  background:none;border:none;text-align:left;
+  font-size:var(--t-2xs);font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;
+  color:var(--fg-3);
+  cursor:pointer;
+}
+.group-title .label{flex:1}
+.group-chevron{
+  width:16px;height:16px;flex:none;
+  transition:transform .22s cubic-bezier(.2,.8,.2,1);
+  color:var(--fg-3);
+}
+.group-title[aria-expanded="true"] .group-chevron{transform:rotate(90deg)}
+.group-title[aria-expanded="true"]{color:var(--fg-2)}
+.group-count{letter-spacing:0;font-variant-numeric:tabular-nums;text-transform:none}
+.group-count.has{color:var(--accent)}
+
+.shelf{
+  display:flex;gap:10px;
+  overflow-x:auto;scroll-snap-type:x proximity;
+  padding:2px 20px 16px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  border-bottom:1px solid var(--line);
+  margin:0 20px;
+  padding-inline:0;
+}
+.shelf::-webkit-scrollbar{display:none}
+.shelf > *{scroll-snap-align:start}
+
+/* expanded: the same tiles, wrapped into a grid, nothing hidden off-screen */
+.shelf.open{
+  flex-wrap:wrap;
+  overflow-x:visible;
+  scroll-snap-type:none;
+  justify-content:flex-start;
+  row-gap:4px;
+}
+/* denser when expanded - four to a row, so a group is scannable rather than
+   an even longer scroll */
+.shelf.open .jar{flex:0 0 calc(25% - 7.5px);width:auto;padding:4px 2px 10px}
+.shelf.open .jar-thumb{width:100%;max-width:80px;height:80px}
+.shelf.open .jar-thumb > svg{width:42px;height:42px}
+.shelf.open .jar-tick{right:2px;width:21px;height:21px}
+@media (min-width:520px){ .shelf.open .jar{flex-basis:calc(20% - 8px)} }
+
+.jar{
+  flex:0 0 104px;width:104px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:6px 2px 12px;
+  background:transparent;border:none;
+}
+/* No tile, no frame: the ingredient sits straight on the page. */
+.jar-thumb{
+  position:relative;
+  width:96px;height:96px;flex:none;
+  display:grid;place-items:center;
+  color:hsl(var(--h) calc(var(--s) + 8%) var(--fgl));
+  opacity:.62;
+  filter:saturate(.72);
+  transition:opacity .18s ease,filter .18s ease,transform .18s ease;
+}
+.jar-thumb > svg{width:52px;height:52px}
+.jar-photo{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:contain;
+  opacity:0;transition:opacity .25s ease;
+}
+.jar-thumb.has-photo .jar-photo{opacity:1}
+.jar-thumb.has-photo > svg{opacity:0}
+
+.jar-label{
+  font-size:var(--t-xs);line-height:1.25;text-align:center;
+  color:var(--fg-3);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  transition:color .16s ease;
+}
+.jar:active .jar-thumb{transform:scale(.94)}
+
+/* Stocked reads three ways at once: full colour, a check badge, and a
+   heavier label - so it never depends on colour alone. */
+.jar[aria-pressed="true"] .jar-thumb{opacity:1;filter:none}
+.jar[aria-pressed="true"] .jar-label{color:var(--fg);font-weight:600}
+.jar-tick{
+  position:absolute;right:6px;bottom:2px;
+  width:24px;height:24px;border-radius:50%;
+  background:var(--accent);color:var(--accent-ink);
+  display:grid;place-items:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.28);
+  opacity:0;transform:scale(.5);
+  transition:opacity .16s ease,transform .18s cubic-bezier(.2,.9,.3,1.5);
+}
+.jar-tick svg{width:12px;height:12px}
+.jar[aria-pressed="true"] .jar-tick{opacity:1;transform:scale(1)}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .jar-thumb{ color:hsl(var(--h) var(--s) var(--fgl-d)); }
+}
+:root[data-theme="dark"] .jar-thumb{ color:hsl(var(--h) var(--s) var(--fgl-d)); }
+
+/* three depths per family, so neighbours in a shelf never look identical */
+.jar-thumb{--bgl:93%;--fgl:29%;--bgl-d:16%;--fgl-d:73%}
+.jar-thumb.t1{--bgl:87%;--fgl:24%;--bgl-d:21%;--fgl-d:67%}
+.jar-thumb.t2{--bgl:81%;--fgl:20%;--bgl-d:26%;--fgl-d:61%}
+
+/* ============================ spin: the deck ============================ */
+/* A fanned arc of cards, like a hand held out. Spin riffles the fan, then
+   the winner rises out of it and squares up. */
+.deck-stage{
+  position:relative;
+  height:296px;
+  margin:0 8px 0;
+  overflow:visible;              /* no frame - the fan sits on the page */
+  perspective:1100px;
+}
+.deck{
+  position:absolute;left:50%;top:50%;
+  width:0;height:0;
+  transform:translate(-50%,-46%);
+  transform-style:preserve-3d;
+}
+.deck-card{
+  position:absolute;
+  width:146px;height:196px;
+  margin-left:-73px;margin-top:-98px;
+  border-radius:var(--r-md);
+  overflow:hidden;
+  background:var(--raised);
+  box-shadow:var(--shadow-lift);
+  transform-origin:50% 118%;
+  transform:rotate(var(--a)) translateY(var(--y,0));
+  transition:transform .62s cubic-bezier(.2,.8,.2,1), opacity .3s ease, filter .45s ease;
+  will-change:transform;
+}
+.deck-card img{width:100%;height:100%;object-fit:cover}
+.deck-card::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,0) 50%,rgba(0,0,0,.8) 100%);
+}
+.deck-name{
+  position:absolute;left:11px;right:11px;bottom:10px;z-index:1;
+  color:#fff;font-size:var(--t-xs);font-weight:600;line-height:1.2;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  opacity:0;transition:opacity .3s ease;
+}
+
+/* resting fan — the middle card sits proud */
+.deck-card{filter:brightness(.72) saturate(.85)}
+.deck-card.is-front{filter:none;z-index:5}
+.deck-card.is-front .deck-name{opacity:1}
+
+/* riffling */
+.deck.spinning .deck-card{
+  transition:transform .16s cubic-bezier(.4,0,.6,1);
+  filter:brightness(.66) saturate(.8);
+}
+
+/* the winner steps forward */
+.deck-card.is-winner{
+  transform:rotate(0deg) translateY(-10px) scale(1.06);
+  filter:none;z-index:9;
+  box-shadow:0 10px 26px rgba(0,0,0,.28), 0 34px 70px rgba(0,0,0,.3);
+}
+.deck-card.is-winner .deck-name{opacity:1}
+.deck.settled .deck-card:not(.is-winner){filter:brightness(.55) saturate(.7);opacity:.85}
+
+.deck-caption{
+  position:absolute;left:16px;right:16px;top:0;z-index:10;
+  text-align:center;
+  font-size:var(--t-sm);
+  color:var(--fg-2);
+  transition:opacity .3s ease;
+}
+.deck-caption.is-result{opacity:0}
+
+
+/* meal chooser for the deck */
+.meal-row{
+  display:flex;gap:8px;flex-wrap:nowrap;
+  overflow-x:auto;scrollbar-width:none;
+  padding:0 20px 2px;
+}
+.meal-row::-webkit-scrollbar{display:none}
+.meal-row .chip{min-height:42px;padding:0 15px}
+.meal-row .chip .n{
+  font-size:var(--t-2xs);color:var(--fg-3);
+  font-variant-numeric:tabular-nums;margin-left:2px;
+}
+.meal-row .chip[aria-selected="true"] .n{color:var(--accent-ink);opacity:.75}
+
+.spin-actions{padding:16px 20px 0}
+.hint{
+  padding:14px 20px 0;color:var(--fg-3);
+  font-size:var(--t-sm);line-height:1.45;max-width:46ch;
+}
+
+.switch-row{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  margin:20px 20px 0;padding:14px 16px;min-height:44px;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);
+  cursor:pointer;
+}
+.switch-text{display:flex;flex-direction:column;gap:3px}
+.switch-title{font-size:var(--t-md);font-weight:500}
+.switch-sub{font-size:var(--t-xs);color:var(--fg-2);line-height:1.35;max-width:34ch}
+.switch-row input{
+  appearance:none;-webkit-appearance:none;
+  width:48px;height:29px;border-radius:100px;flex:none;
+  background:var(--sunk);border:1px solid var(--line-strong);
+  position:relative;cursor:pointer;transition:background .2s ease,border-color .2s ease;
+}
+.switch-row input::after{
+  content:"";position:absolute;top:2px;left:2px;
+  width:23px;height:23px;border-radius:50%;background:var(--surface);
+  box-shadow:0 1px 3px rgba(0,0,0,.3);
+  transition:transform .2s cubic-bezier(.2,.8,.2,1);
+}
+.switch-row input:focus-visible{outline:2.5px solid var(--accent);outline-offset:3px;border-radius:100px}
+.switch-row input:checked{background:var(--accent);border-color:var(--accent)}
+.switch-row input:checked::after{transform:translateX(19px);background:#fff}
+
+/* ==================== pantry -> recipes hand-off ==================== */
+/* The count lives with the chips that produce it, so cause and effect are
+   never separated by a tab switch. */
+.pantry-action{
+  position:fixed;left:0;right:0;
+  bottom:calc(var(--tab-h) + env(safe-area-inset-bottom));
+  z-index:25;
+  max-width:620px;margin:0 auto;
+  padding:12px 20px;
+  background:linear-gradient(to top,var(--ground) 62%,transparent);
+  transform:translateY(130%);
+  transition:transform .32s cubic-bezier(.2,.8,.2,1);
+  pointer-events:none;
+}
+.pantry-action.show{transform:translateY(0);pointer-events:auto}
+.pantry-action .btn{width:100%;box-shadow:var(--shadow-lift)}
+.pantry-action .btn b{font-variant-numeric:tabular-nums}
+
+/* first-run call to action on Today */
+.cta-card{
+  margin:2px 20px 0;padding:24px 22px;
+  border-radius:var(--r-lg);
+  background:var(--surface);
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+}
+.cta-card h3{
+  font-family:var(--display);font-weight:800;
+  font-size:var(--t-xl);letter-spacing:-.035em;line-height:1.08;
+  margin-bottom:8px;text-wrap:balance;
+}
+.cta-card p{color:var(--fg-2);font-size:var(--t-md);line-height:1.5;margin-bottom:18px;max-width:42ch}
+
+/* ============================ buttons ============================ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:52px;padding:0 24px;
+  border-radius:var(--r-md);
+  font-size:var(--t-lg);font-weight:600;letter-spacing:-.01em;
+  transition:background .16s ease,transform .1s ease,opacity .16s ease;
+}
+.btn-primary{background:var(--accent);color:var(--accent-ink)}
+.btn-primary:active{background:var(--accent-press);transform:scale(.985)}
+.btn-primary[disabled]{background:var(--raised);color:var(--fg-3);cursor:default}
+.btn-secondary{background:var(--raised);color:var(--fg);border:1px solid var(--line)}
+.btn-secondary:active{transform:scale(.985)}
+.btn-block{width:100%}
+.btn-big{
+  font-family:var(--display);font-weight:800;
+  font-size:var(--t-xl);letter-spacing:-.03em;min-height:62px;
+}
+
+/* ============================ tab bar ============================ */
+.tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  max-width:620px;margin:0 auto;
+  display:flex;
+  height:calc(var(--tab-h) + env(safe-area-inset-bottom));
+  padding:0 6px env(safe-area-inset-bottom);
+  background:color-mix(in srgb,var(--ground) 88%,transparent);
+  backdrop-filter:saturate(180%) blur(22px);
+  -webkit-backdrop-filter:saturate(180%) blur(22px);
+  border-top:1px solid var(--line);
+}
+.tab{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  color:var(--fg-3);font-size:var(--t-2xs);font-weight:500;
+  transition:color .16s ease;
+}
+.tab svg{width:23px;height:23px}
+/* active tab is a filled glyph AND accent — never colour alone */
+.tab .glyph-fill{opacity:0}
+.tab[aria-current="page"]{color:var(--accent);font-weight:600}
+.tab[aria-current="page"] .glyph-fill{opacity:1}
+.tab[aria-current="page"] .glyph-line{opacity:0}
+
+/* ============================ sheet ============================ */
+.scrim{
+  position:fixed;inset:0;z-index:50;
+  background:rgba(0,0,0,0);
+  visibility:hidden;pointer-events:none;
+  /* visibility flips instantly on open so focus can move in on the next frame,
+     and is held until after the fade on close */
+  transition:background .28s ease, visibility 0s linear .28s;
+}
+.scrim.open{
+  background:rgba(0,0,0,.62);visibility:visible;pointer-events:auto;
+  transition:background .28s ease, visibility 0s linear 0s;
+}
+
+.sheet{
+  position:absolute;left:0;right:0;bottom:0;
+  max-width:620px;margin:0 auto;max-height:92dvh;
+  display:flex;flex-direction:column;
+  background:var(--ground);
+  border-radius:26px 26px 0 0;
+  border-top:1px solid var(--line);
+  box-shadow:0 -10px 50px rgba(0,0,0,.6);
+  transform:translateY(100%);
+  transition:transform .36s cubic-bezier(.32,.72,0,1);
+  overflow:hidden;
+}
+.scrim.open .sheet{transform:translateY(0)}
+
+/* A compact bar fades in as the photo scrolls away, so the recipe name and
+   the close control stay with you through a long ingredient list. */
+.sheet-bar{
+  position:absolute;top:0;left:0;right:0;z-index:2;
+  height:60px;display:flex;align-items:center;
+  padding:0 62px 0 22px;
+  background:var(--ground);
+  border-bottom:1px solid var(--line);
+  border-radius:26px 26px 0 0;
+  opacity:0;pointer-events:none;
+  transition:opacity .22s ease;
+}
+.sheet-bar.show{opacity:1}
+.sheet-bar-title{
+  font-weight:600;font-size:var(--t-md);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* the photo eases away rather than jumping under the bar */
+.sheet-hero{overflow:hidden}
+.sheet-img{
+  width:100%;aspect-ratio:16/10;object-fit:cover;background:var(--surface);
+  transform-origin:50% 0;
+  will-change:transform;
+}
+
+.sheet-close{
+  position:absolute;top:13px;right:14px;z-index:4;
+  width:34px;height:34px;border-radius:50%;
+  display:grid;place-items:center;
+  background:rgba(10,10,11,.62);backdrop-filter:blur(10px);
+  color:#fff;
+}
+.sheet-close svg{width:15px;height:15px}
+.sheet:focus{outline:none}
+.sheet-scroll{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
+.sheet-body{padding:22px 22px 10px}
+.sheet h2{
+  font-family:var(--display);font-weight:800;
+  font-size:var(--t-2xl);letter-spacing:-.04em;line-height:1.02;
+  margin:9px 0 10px;text-wrap:balance;
+}
+.sheet-source{font-size:var(--t-xs);color:var(--fg-2)}
+.sheet-method{color:var(--fg-2);font-size:var(--t-md);line-height:1.55;max-width:56ch}
+/* Dietary facts are metadata, not an alert. They read as quiet capsules;
+   only an actual instruction gets a line of its own, and only a genuine
+   "this is not GF as written" warning gets the accent. */
+.diet-tags{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 2px}
+.tag{
+  display:inline-flex;align-items:center;
+  padding:4px 10px;border-radius:100px;
+  background:var(--sunk);
+  color:var(--fg-2);
+  font-size:var(--t-2xs);font-weight:600;
+  letter-spacing:.01em;white-space:nowrap;
+}
+.recipe-note{
+  display:flex;gap:9px;align-items:flex-start;
+  margin-top:14px;
+  font-size:var(--t-sm);line-height:1.45;color:var(--fg-2);
+}
+.recipe-note svg{width:15px;height:15px;flex:none;margin-top:2px}
+.recipe-note.is-warning{color:var(--fg)}
+.recipe-note.is-warning svg{color:var(--accent)}
+
+.ing-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  margin:28px 0 4px;
+}
+.ing-head h3{font-family:var(--display);font-weight:800;font-size:var(--t-lg);letter-spacing:-.03em}
+.ing-count{font-size:var(--t-xs);color:var(--fg-3);font-variant-numeric:tabular-nums}
+
+.ing-item{
+  display:flex;align-items:center;gap:13px;
+  width:100%;text-align:left;
+  min-height:48px;padding:9px 0;
+  border-bottom:1px solid var(--line);
+}
+.ing-item:last-child{border-bottom:none}
+.ing-box{
+  width:23px;height:23px;flex:none;
+  border-radius:7px;border:1.8px solid var(--line-strong);
+  display:grid;place-items:center;
+  transition:background .15s ease,border-color .15s ease;
+}
+.ing-box svg{width:12px;height:12px;opacity:0;transition:opacity .12s ease}
+.ing-item[aria-pressed="true"] .ing-box{background:var(--have);border-color:var(--have)}
+.ing-item[aria-pressed="true"] .ing-box svg{opacity:1}
+.ing-text{font-size:var(--t-md);line-height:1.35}
+.ing-item[aria-pressed="true"] .ing-text{color:var(--fg-3);text-decoration:line-through}
+.ing-item.untracked .ing-box{visibility:hidden}
+.ing-item.untracked .ing-text{color:var(--fg-2)}
+.ing-item.untracked{cursor:default}
+
+.source-link{
+  display:inline-block;margin:20px 0 26px;
+  font-size:var(--t-md);font-weight:600;color:var(--accent);
+  border-bottom:1.5px solid var(--accent);padding-bottom:2px;
+}
+.sheet-footer{
+  display:flex;gap:10px;flex:none;
+  padding:12px 20px calc(14px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--line);
+  background:var(--ground);
+}
+.sheet-footer .btn-primary{flex:1}
+
+/* ============================ motion opt-out ============================ */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
+  .marquee-track{animation:none}
+  .marquee{-webkit-mask-image:none;mask-image:none}
+}
+
+@media (min-width:620px){
+  .card{flex-basis:186px;width:186px}
+  .skeleton-card{flex-basis:186px;width:186px}
+}

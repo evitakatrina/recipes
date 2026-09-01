@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="Gluten-free, dairy-free recipes matched to what's already in your pantry.">
+<meta name="theme-color" content="#F4F2EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F0E0D" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Sift">
+<title>Sift — Gluten-Free, Dairy-Free Recipes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="style.css?v=20260901165457">
+</head>
+<body>
+
+<div class="app">
+
+  <header class="topbar">
+    <span class="brand">Sift<em>.</em></span>
+    <span class="today" id="todayLabel"></span>
+  </header>
+
+  <main class="content">
+
+    <!-- ============ TODAY ============ -->
+    <section class="view" id="view-today" aria-labelledby="tab-today">
+
+      <div id="todaySkeleton">
+        <div class="skeleton skeleton-hero"></div>
+        <div class="section-head"><span class="section-title">Loading recipes</span></div>
+        <div class="rail">
+          <div class="skeleton skeleton-card"></div>
+          <div class="skeleton skeleton-card"></div>
+          <div class="skeleton skeleton-card"></div>
+        </div>
+      </div>
+
+      <div id="todayContent" hidden>
+        <!-- first run: point straight at the pantry-first flow -->
+        <div class="cta-card" id="startCard" hidden>
+          <h3>Start with what you already have</h3>
+          <p>Tick off the ingredients in your kitchen and Sift shows you only the recipes you can actually cook tonight.</p>
+          <button class="btn btn-primary btn-block" type="button" id="startPantryBtn">Choose my ingredients</button>
+        </div>
+
+        <button class="hero" id="heroCard" type="button">
+          <img id="heroImg" class="hero-img" src="" alt="">
+          <span class="hero-text">
+            <span class="eyebrow">Recipe of the day</span>
+            <h1 id="heroName"></h1>
+            <span class="hero-meta" id="heroMeta"></span>
+            <span class="hero-match" id="heroMatch" hidden></span>
+          </span>
+        </button>
+
+        <div class="section-head">
+          <h2 class="section-title">Ready to cook</h2>
+          <span class="section-meta" id="readyCount"></span>
+        </div>
+        <div id="readyWrap"></div>
+
+        <div class="section-head">
+          <h2 class="section-title">Everything else</h2>
+          <span class="section-meta" id="allCount"></span>
+        </div>
+        <div class="marquee" id="marqueeWrap">
+          <div class="marquee-track" id="marqueeTrack"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SPIN ============ -->
+    <section class="view" id="view-wheel" hidden aria-labelledby="tab-wheel">
+      <div class="deck-stage">
+        <div class="deck" id="deck"></div>
+        <span class="deck-caption" id="deckCaption">Tap spin to deal a recipe</span>
+      </div>
+      <div class="meal-row" id="mealRow" role="tablist" aria-label="Meal"></div>
+      <div class="spin-actions">
+        <button class="btn btn-primary btn-block btn-big" id="spinBtn" type="button">Spin</button>
+      </div>
+      <p class="hint" id="spinHint"></p>
+      <label class="switch-row">
+        <span class="switch-text">
+          <span class="switch-title">Match my pantry</span>
+          <span class="switch-sub" id="switchSub">Deal only recipes you already have at least half the ingredients for.</span>
+        </span>
+        <input type="checkbox" id="pantryOnlyToggle" aria-describedby="switchSub">
+      </label>
+    </section>
+
+    <!-- ============ BROWSE ============ -->
+    <section class="view" id="view-browse" hidden aria-labelledby="tab-browse">
+      <div class="chip-row" id="categoryFilters" role="tablist" aria-label="Filter by category"></div>
+      <div class="grid" id="browseGrid"></div>
+    </section>
+
+    <!-- ============ PANTRY ============ -->
+    <section class="view" id="view-pantry" hidden aria-labelledby="tab-pantry">
+      <p class="pantry-intro">Tap what you keep on hand. Sift uses it to work out what you can cook right now, and builds your shopping list from what's missing.</p>
+      <div class="pantry-bar">
+        <input class="search" id="pantrySearch" type="search" placeholder="Search ingredients" aria-label="Search ingredients">
+        <span class="pantry-count" id="pantryCount"></span>
+      </div>
+      <div id="pantryGroups"></div>
+      <p class="empty" id="pantryEmpty" hidden>No ingredient matches that search.</p>
+    </section>
+
+  </main>
+
+  <!-- One icon family: 22x22 optical box, 1.6 stroke, 2.2 corner radius.
+       Outline = unselected, solid = selected. Metaphors are literal:
+       a bowl for today's dish, two dealt cards for spin, a grid of cards
+       for browse, a jar for the pantry. -->
+  <nav class="tabbar" id="tabbar" aria-label="Main">
+    <button class="tab" id="tab-today" type="button" data-view="today" aria-current="page">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <g class="glyph-line" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <path d="M3.4 10.8h17.2a8.6 8.6 0 01-17.2 0z"/>
+          <path d="M12 3.4c1.9 1.2 1.9 3 0 4.2"/>
+          <path d="M8.4 5c1.2.8 1.2 1.9 0 2.7"/><path d="M15.6 5c1.2.8 1.2 1.9 0 2.7"/>
+        </g>
+        <g class="glyph-fill" fill="currentColor">
+          <path d="M3.4 10.8h17.2a8.6 8.6 0 01-17.2 0z"/>
+        </g>
+        <g class="glyph-fill" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <path d="M12 3.4c1.9 1.2 1.9 3 0 4.2"/>
+          <path d="M8.4 5c1.2.8 1.2 1.9 0 2.7"/><path d="M15.6 5c1.2.8 1.2 1.9 0 2.7"/>
+        </g>
+      </svg>
+      <span>Today</span>
+    </button>
+
+    <button class="tab" id="tab-wheel" type="button" data-view="wheel">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <g class="glyph-line" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
+          <rect x="9.4" y="5.2" width="9.4" height="12.6" rx="2.1" transform="rotate(15 14.1 11.5)"/>
+          <rect x="5.2" y="6.2" width="9.4" height="12.6" rx="2.1" transform="rotate(-12 9.9 12.5)"/>
+        </g>
+        <g class="glyph-fill">
+          <rect x="9.4" y="5.2" width="9.4" height="12.6" rx="2.1" transform="rotate(15 14.1 11.5)"
+                fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+          <rect x="5.2" y="6.2" width="9.4" height="12.6" rx="2.1" transform="rotate(-12 9.9 12.5)"
+                fill="currentColor" stroke="var(--ground)" stroke-width="1.7" stroke-linejoin="round"/>
+        </g>
+      </svg>
+      <span>Spin</span>
+    </button>
+
+    <button class="tab" id="tab-browse" type="button" data-view="browse">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <g class="glyph-line" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
+          <rect x="3.6" y="3.6" width="7.4" height="7.4" rx="2.2"/><rect x="13" y="3.6" width="7.4" height="7.4" rx="2.2"/>
+          <rect x="3.6" y="13" width="7.4" height="7.4" rx="2.2"/><rect x="13" y="13" width="7.4" height="7.4" rx="2.2"/>
+        </g>
+        <!-- filled squares are inset so this glyph carries the same optical
+             weight as the single-shape glyphs beside it -->
+        <g class="glyph-fill" fill="currentColor">
+          <rect x="4.2" y="4.2" width="6.2" height="6.2" rx="1.9"/><rect x="13.6" y="4.2" width="6.2" height="6.2" rx="1.9"/>
+          <rect x="4.2" y="13.6" width="6.2" height="6.2" rx="1.9"/><rect x="13.6" y="13.6" width="6.2" height="6.2" rx="1.9"/>
+        </g>
+      </svg>
+      <span>Browse</span>
+    </button>
+
+    <button class="tab" id="tab-pantry" type="button" data-view="pantry">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <g class="glyph-line" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
+          <path d="M8.4 3.4h7.2v2.1l1.5 2.4a3 3 0 01.5 1.6v8.9a2.2 2.2 0 01-2.2 2.2H8.6a2.2 2.2 0 01-2.2-2.2V9.5a3 3 0 01.5-1.6l1.5-2.4V3.4z"/>
+          <path d="M6.6 12.6h10.8"/>
+        </g>
+        <g class="glyph-fill" fill="currentColor">
+          <path d="M8.4 3.4h7.2v2.1l1.5 2.4a3 3 0 01.5 1.6v8.9a2.2 2.2 0 01-2.2 2.2H8.6a2.2 2.2 0 01-2.2-2.2V9.5a3 3 0 01.5-1.6l1.5-2.4V3.4z" opacity=".3"/>
+          <path d="M6.4 12.6h11.2v5.8a2.2 2.2 0 01-2.2 2.2H8.6a2.2 2.2 0 01-2.2-2.2v-5.8z"/>
+          <path d="M8.4 3.4h7.2v2.1l1.5 2.4a3 3 0 01.5 1.6v.9H6.4v-.9a3 3 0 01.5-1.6l1.5-2.4V3.4z"/>
+        </g>
+      </svg>
+      <span>Pantry</span>
+    </button>
+  </nav>
+
+  <!-- live hand-off from the pantry to the recipes it unlocks -->
+  <div class="pantry-action" id="pantryAction">
+    <button class="btn btn-primary" type="button" id="pantryActionBtn"></button>
+  </div>
+
+</div>
+
+<!-- ============ recipe sheet ============ -->
+<div class="scrim" id="sheetScrim">
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetName" tabindex="-1">
+    <div class="sheet-bar" id="sheetBar">
+      <span class="sheet-bar-title" id="sheetBarTitle"></span>
+    </div>
+    <button class="sheet-close" id="closeSheetBtn" type="button" aria-label="Close recipe">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+    </button>
+    <div class="sheet-scroll" id="sheetScroll">
+      <div class="sheet-hero">
+        <img id="sheetImg" class="sheet-img" src="" alt="">
+      </div>
+      <div class="sheet-body">
+        <span class="sheet-source" id="sheetSource"></span>
+        <h2 id="sheetName"></h2>
+        <div class="diet-tags" id="sheetTags"></div>
+        <p class="sheet-method" id="sheetMethod"></p>
+        <p class="recipe-note" id="sheetNote" hidden></p>
+
+        <div class="ing-head">
+          <h3>Ingredients</h3>
+          <span class="ing-count" id="ingredientsCount"></span>
+        </div>
+        <ul class="ing-list" id="ingredientList"></ul>
+
+        <a class="source-link" id="sheetLink" href="#" target="_blank" rel="noopener">
+          Full recipe on <span id="sheetLinkSource"></span> &rarr;
+        </a>
+      </div>
+    </div>
+    <div class="sheet-footer">
+      <button class="btn btn-primary" id="calendarBtn" type="button">Add missing to Calendar</button>
+    </div>
+  </div>
+</div>
+
+<div class="visually-hidden" id="liveRegion" role="status" aria-live="polite"></div>
+
+<script src="icons.js?v=20260901165457"></script>
+<script src="app.js?v=20260901165457"></script>
+</body>
+</html>
