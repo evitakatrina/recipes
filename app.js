@@ -187,6 +187,7 @@
       window.scrollTo({ top: 0, behavior: "instant" });
       $("pantryAction").classList.toggle("show", view === "pantry" && pantry.size > 0);
       save(STORAGE_KEYS.view, view);      // survive a refresh
+      if (view === "wheel") refreshWheel();
     };
     tabs.forEach(t => t.addEventListener("click", () => switchTo(t.dataset.view)));
     const last = loadJSON(STORAGE_KEYS.view, "today");
@@ -590,10 +591,13 @@
           if (selectedDate) $("dayPanel").scrollIntoView({ behavior: "smooth", block: "nearest" });
           return;
         }
+        // an empty day means you have not decided yet, so hand straight over
+        // to the deck with that day armed
         selectedDate = null;
-        armedDate = (armedDate === key) ? null : key;
+        armedDate = key;
         renderPlan();
-        if (armedDate) announce("Now pick a recipe for " + prettyDate(armedDate));
+        switchTo("wheel");
+        announce("Spin to pick a meal for " + prettyDate(key));
       });
       grid.appendChild(cell);
     }
@@ -747,6 +751,13 @@
     }
 
     function updateHint() {
+      if (armedDate) {
+        $("spinHint").textContent = "Choosing a meal for " + prettyDate(armedDate)
+          + ". Spin, then tap Plan in the recipe.";
+        $("spinHint").classList.add("armed");
+        return;
+      }
+      $("spinHint").classList.remove("armed");
       const scope = meal.cats ? meal.label.toLowerCase() + " recipes" : "recipes";
       $("spinHint").textContent = "Deals from " + pool.length + " " + scope +
         (pantryOnly ? " you can mostly make" : "") + ". Tap again to stop it early.";
