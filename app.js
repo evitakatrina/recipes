@@ -87,16 +87,33 @@
   // Most dfNotes just reassure ("Naturally vegan/dairy-free"). Those become
   // quiet capsules. Only a note that asks the cook to do something becomes a
   // line of guidance, and only a real "not GF as written" gets the accent.
+  // Tags are computed from the recipe's own watch notes, not asserted. A tag
+  // is withheld the moment anything in the recipe requires that thing.
   function dietTags(recipe) {
+    const watch = recipe.watch || [];
+    const requires = kind => watch.some(w => w.kind === kind && w.level === "required");
     const n = (recipe.dfNote || "").toLowerCase();
     const tags = [];
-    if (!/not gluten-free/.test(n)) tags.push("Gluten-free");
-    tags.push("Dairy-free");
+    if (!requires("gluten") && !/not gluten-free/.test(n)) tags.push("Gluten-free");
+    if (!requires("dairy")) tags.push("Dairy-free");
     if (/\bvegan\b/.test(n)) tags.push("Vegan");
     if (/\bpaleo\b/.test(n)) tags.push("Paleo");
     if (/nut-free/.test(n)) tags.push("Nut-free");
-    if (/oil-free/.test(n)) tags.push("Oil-free");
     return tags;
+  }
+
+  // What to actually watch out for while cooking this one.
+  function watchNote(recipe) {
+    const w = (recipe.watch || []);
+    if (!w.length) return null;
+    const req = w.filter(x => x.level === "required");
+    const alt = w.filter(x => x.level === "alternative");
+    const srv = w.filter(x => x.level === "serving");
+    const list = a => a.map(x => x.term).join(" and ");
+    if (req.length) return { level: "warn", text: "The method calls for " + list(req) + ". Swap it for olive or coconut oil." };
+    if (alt.length) return { level: "info", text: "One step offers " + list(alt) + " as an option. Use the other choice." };
+    if (srv.length) return { level: "info", text: "The serving suggestion mentions " + list(srv) + ". Leave it off." };
+    return null;
   }
 
   const ACTION = /\b(skip|use|swap|leave out|replace|top with|make it with|not gluten-free)\b/i;
@@ -1011,7 +1028,8 @@
       tagRow.appendChild(el);
     });
 
-    const note = dietNote(recipe);
+    const wn = watchNote(recipe);
+    const note = wn ? { text: wn.text, warning: wn.level === "warn" } : dietNote(recipe);
     const noteEl = $("sheetNote");
     if (note) {
       noteEl.hidden = false;

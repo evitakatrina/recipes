@@ -1962,6 +1962,13 @@
   ],
   "equipment": [
    "blender"
+  ],
+  "watch": [
+   {
+    "term": "pita",
+    "kind": "gluten",
+    "level": "serving"
+   }
   ]
  },
  {
@@ -3271,6 +3278,13 @@
   "equipment": [
    "oven",
    "blender"
+  ],
+  "watch": [
+   {
+    "term": "pita",
+    "kind": "gluten",
+    "level": "serving"
+   }
   ]
  },
  {
@@ -4426,6 +4440,13 @@
   ],
   "equipment": [
    "pressure cooker"
+  ],
+  "watch": [
+   {
+    "term": "ghee",
+    "kind": "dairy",
+    "level": "required"
+   }
   ]
  },
  {
@@ -5520,7 +5541,14 @@
    "Adjust other flavors if needed, adding more lemon for acidity, sun-dried tomato for deeper tomato flavor, onion for crunch/spice, or parsley or oregano.",
    "Enjoy immediately with pita, pita chips, or vegetables! Best when fresh, though leftovers keep in the refrigerator for 2-3 days."
   ],
-  "equipment": []
+  "equipment": [],
+  "watch": [
+   {
+    "term": "pita",
+    "kind": "gluten",
+    "level": "serving"
+   }
+  ]
  },
  {
   "id": "r74",
@@ -6014,6 +6042,13 @@
   ],
   "equipment": [
    "oven"
+  ],
+  "watch": [
+   {
+    "term": "bleu cheese",
+    "kind": "dairy",
+    "level": "serving"
+   }
   ]
  },
  {
@@ -7075,6 +7110,13 @@
   ],
   "equipment": [
    "oven"
+  ],
+  "watch": [
+   {
+    "term": "couscous",
+    "kind": "gluten",
+    "level": "serving"
+   }
   ]
  },
  {
@@ -7253,6 +7295,13 @@
   ],
   "equipment": [
    "oven"
+  ],
+  "watch": [
+   {
+    "term": "pita",
+    "kind": "gluten",
+    "level": "serving"
+   }
   ]
  },
  {
@@ -7987,6 +8036,13 @@
   ],
   "equipment": [
    "blender"
+  ],
+  "watch": [
+   {
+    "term": "pita",
+    "kind": "gluten",
+    "level": "serving"
+   }
   ]
  },
  {
@@ -14705,7 +14761,14 @@
    "Add the tomatoes and simmer. Add the crushed tomatoes and water. Stir to combine. Place the tomato slices on top. Bring to a boil, then reduce the heat to low and cover most of the way with a lid. Let the okra simmer on low heat for 20 to 25 minutes or until the okra has softened. Uncover and add the juice of 1/2 lime (more to your liking).",
    "Enjoy. Remove from heat and serve over rice or with warm pita bread."
   ],
-  "equipment": []
+  "equipment": [],
+  "watch": [
+   {
+    "term": "pita",
+    "kind": "gluten",
+    "level": "serving"
+   }
+  ]
  },
  {
   "id": "r197",
@@ -15010,6 +15073,13 @@
   "equipment": [
    "oven",
    "blender"
+  ],
+  "watch": [
+   {
+    "term": "pita",
+    "kind": "gluten",
+    "level": "serving"
+   }
   ]
  },
  {
@@ -17423,7 +17493,14 @@
    "Fold in the mint, cilantro, and scallions if using. Season to taste with salt as needed. If desired, mix in more toasted rice powder.",
    "Serve with cooked rice for scooping and fresh veggies/lime wedges on the side."
   ],
-  "equipment": []
+  "equipment": [],
+  "watch": [
+   {
+    "term": "soy sauce",
+    "kind": "gluten",
+    "level": "alternative"
+   }
+  ]
  },
  {
   "id": "r234",
@@ -17769,6 +17846,13 @@
   "equipment": [
    "slow cooker",
    "pressure cooker"
+  ],
+  "watch": [
+   {
+    "term": "ghee",
+    "kind": "dairy",
+    "level": "alternative"
+   }
   ]
  },
  {
@@ -19437,6 +19521,13 @@
   "equipment": [
    "blender",
    "microwave"
+  ],
+  "watch": [
+   {
+    "term": "pita",
+    "kind": "gluten",
+    "level": "serving"
+   }
   ]
  },
  {
@@ -19696,6 +19787,13 @@
   "equipment": [
    "oven",
    "blender"
+  ],
+  "watch": [
+   {
+    "term": "croutons",
+    "kind": "gluten",
+    "level": "serving"
+   }
   ]
  },
  {
