@@ -259,17 +259,17 @@ a{color:inherit;text-decoration:none}
   transition:transform .2s cubic-bezier(.2,.8,.2,1);
 }
 .card:active{transform:scale(.97)}
-.card-img{width:100%;aspect-ratio:1/1;object-fit:cover;background:var(--raised);display:block}
+.card-img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center;background:var(--raised);display:block}
 /* if a publisher's image fails, the card keeps its shape and says so */
 .card-fallback{
-  width:100%;aspect-ratio:1/1;
+  width:100%;aspect-ratio:4/5;
   display:grid;place-items:center;
   background:
     repeating-linear-gradient(45deg, var(--raised) 0 10px, var(--surface) 10px 20px);
   color:var(--fg-3);
 }
 .card-fallback svg{width:26px;height:26px;opacity:.7}
-.grid .card-fallback{aspect-ratio:4/3}
+.grid .card-fallback{aspect-ratio:4/5}
 .card-body{padding:11px 12px 13px}
 .card-name{
   font-weight:600; font-size:var(--t-sm); line-height:1.25;
@@ -282,7 +282,7 @@ a{color:inherit;text-decoration:none}
 /* browse grid */
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;padding:0 20px}
 .grid .card{flex:none;width:100%}
-.grid .card-img{aspect-ratio:4/3}
+.grid .card-img{aspect-ratio:4/5}
 
 .empty{
   padding:2px 20px 18px;
@@ -714,7 +714,7 @@ a{color:inherit;text-decoration:none}
 /* the photo eases away rather than jumping under the bar */
 .sheet-hero{overflow:hidden}
 .sheet-img{
-  width:100%;aspect-ratio:16/10;object-fit:cover;background:var(--surface);
+  width:100%;aspect-ratio:1/1;object-fit:cover;object-position:center;background:var(--surface);
   transform-origin:50% 0;
   will-change:transform;
 }
