@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Instrument+Sans:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="style.css?v=20260901185828">
+<link rel="stylesheet" href="style.css?v=20260901190229">
 </head>
 <body>
 
@@ -272,26 +272,26 @@
         </div>
         <ul class="ing-list" id="ingredientList"></ul>
 
-        <button class="plan-row" id="planRow" type="button" aria-expanded="false">
-          <span class="plan-when">
+        <div class="plan-card" id="planCard">
+          <button class="plan-row" id="planRow" type="button" aria-expanded="false" aria-controls="miniCal">
             <span class="plan-label">Cook this on</span>
             <span class="plan-value" id="planValue">Today</span>
-          </span>
-          <span class="plan-go" id="planGo">Plan</span>
-        </button>
+            <svg class="plan-chevron" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+          </button>
 
-        <div class="mini-cal" id="miniCal" hidden>
-          <div class="mini-head">
-            <button class="cal-nav" id="miniPrev" type="button" aria-label="Previous month">
-              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
-            </button>
-            <span class="mini-title" id="miniTitle"></span>
-            <button class="cal-nav" id="miniNext" type="button" aria-label="Next month">
-              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
-            </button>
+          <div class="mini-cal" id="miniCal" hidden>
+            <div class="mini-head">
+              <button class="cal-nav" id="miniPrev" type="button" aria-label="Previous month">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+              </button>
+              <span class="mini-title" id="miniTitle"></span>
+              <button class="cal-nav" id="miniNext" type="button" aria-label="Next month">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+            <div class="mini-dow" id="miniDow"></div>
+            <div class="mini-grid" id="miniGrid"></div>
           </div>
-          <div class="mini-dow" id="miniDow"></div>
-          <div class="mini-grid" id="miniGrid"></div>
         </div>
         <button class="plan-clear" id="planClear" type="button" hidden>Remove from plan</button>
 
@@ -317,7 +317,7 @@
 
 <div class="visually-hidden" id="liveRegion" role="status" aria-live="polite"></div>
 
-<script src="icons.js?v=20260901185828"></script>
-<script src="app.js?v=20260901185828"></script>
+<script src="icons.js?v=20260901190229"></script>
+<script src="app.js?v=20260901190229"></script>
 </body>
 </html>

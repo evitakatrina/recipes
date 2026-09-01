@@ -980,18 +980,17 @@
     if (!r) return;
     const key = armedDate || todayISO();
     const plannedOn = Object.keys(plan).find(k => plan[k] === r.id);
-    const row = $("planRow"), val = $("planValue"), go = $("planGo"), clear = $("planClear");
+    const card = $("planCard"), val = $("planValue"), clear = $("planClear");
+    const pretty = k => prettyDate(k) === "today" ? "Today" : prettyDate(k);
 
     if (plannedOn) {
-      row.classList.add("is-planned");
-      val.textContent = prettyDate(plannedOn) === "today" ? "Today" : prettyDate(plannedOn);
-      go.textContent = "Planned";
+      card.classList.add("is-planned");
+      val.textContent = pretty(plannedOn);
       clear.hidden = false;
-      clear.textContent = "Remove from " + prettyDate(plannedOn);
+      clear.textContent = "Remove from " + pretty(plannedOn);
     } else {
-      row.classList.remove("is-planned");
-      val.textContent = prettyDate(key) === "today" ? "Today" : prettyDate(key);
-      go.textContent = "Plan";
+      card.classList.remove("is-planned");
+      val.textContent = "Not planned";
       clear.hidden = true;
     }
   }
