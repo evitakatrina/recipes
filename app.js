@@ -662,7 +662,7 @@
     $("sheetScrim").addEventListener("click", e => {
       if (e.target.id === "sheetScrim") closeSheet();
     });
-    $("calendarBtn").addEventListener("click", addMissingToCalendar);
+    $("calendarBtn").addEventListener("click", sendShoppingList);
 
     document.addEventListener("keydown", e => {
       if (!$("sheetScrim").classList.contains("open")) return;
@@ -691,10 +691,10 @@
     const missing = trackable(r).filter(i => !checked.has(i.key) && !pantry.has(i.key));
     if (!missing.length) {
       btn.disabled = true;
-      btn.textContent = "You have everything";
+      btn.querySelector("#calendarBtnLabel").textContent = "You have everything";
     } else {
       btn.disabled = false;
-      btn.textContent = "Add " + missing.length + " missing to Calendar";
+      btn.querySelector("#calendarBtnLabel").textContent = "Add " + missing.length + " to my list";
     }
   }
 
@@ -788,26 +788,49 @@
   }
 
   // ---------- Shopping list ----------
-  function addMissingToCalendar() {
+  // On iPhone the native share sheet is the only route into Reminders and
+  // Notes - neither app exposes a URL scheme a web page may call. Sharing
+  // hands the list to the system and lets you pick Reminders, Notes,
+  // Messages or anything else. Elsewhere we fall back to the clipboard.
+  function shoppingList(r) {
+    const checked = new Set(checkedByRecipe[r.id] || []);
+    return trackable(r).filter(i => !checked.has(i.key) && !pantry.has(i.key));
+  }
+
+  function listText(r, missing) {
+    return "Shopping list — " + r.name + "\n\n"
+      + missing.map(m => "\u2022 " + m.text).join("\n")
+      + "\n\n" + r.source + "\n" + r.url;
+  }
+
+  async function sendShoppingList() {
     const r = currentSheetRecipe;
     if (!r) return;
-    const checked = new Set(checkedByRecipe[r.id] || []);
-    const missing = trackable(r).filter(i => !checked.has(i.key) && !pantry.has(i.key));
+    const missing = shoppingList(r);
     if (!missing.length) return;
 
-    const title = encodeURIComponent("Buy ingredients: " + r.name);
-    const details = encodeURIComponent(
-      missing.map(m => "• " + m.text).join("\n") + "\n\nFor: " + r.name + " (" + r.source + ")\n" + r.url
-    );
-    const d = new Date(); d.setDate(d.getDate() + 1);
-    const fmt = x => x.getFullYear() + String(x.getMonth() + 1).padStart(2, "0") + String(x.getDate()).padStart(2, "0");
-    const next = new Date(d); next.setDate(next.getDate() + 1);
+    const text = listText(r, missing);
+    const btn = $("calendarBtn");
 
-    window.open(
-      "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + title +
-      "&details=" + details + "&dates=" + fmt(d) + "/" + fmt(next),
-      "_blank", "noopener"
-    );
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "Shopping list — " + r.name, text });
+        announce("Shopping list shared");
+        return;
+      } catch (err) {
+        if (err && err.name === "AbortError") return;   // user dismissed
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      const lbl = btn.querySelector("#calendarBtnLabel");
+      const was = lbl.textContent;
+      lbl.textContent = "Copied to clipboard";
+      announce("Shopping list copied");
+      setTimeout(() => { lbl.textContent = was; }, 2000);
+    } catch (e) {
+      announce("Could not share the list.");
+    }
   }
 
   document.addEventListener("DOMContentLoaded", init);
