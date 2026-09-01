@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Instrument+Sans:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="style.css?v=20260901173441">
+<link rel="stylesheet" href="style.css?v=20260901175832">
 </head>
 <body>
 
@@ -114,6 +114,21 @@
       <p class="cal-hint" id="calHint"></p>
       <div class="cal-dow" id="calDow"></div>
       <div class="cal-grid" id="calGrid"></div>
+      <div class="day-panel" id="dayPanel" hidden>
+        <div class="day-panel-head">
+          <div>
+            <span class="day-panel-date" id="dayPanelDate"></span>
+            <h3 class="day-panel-name" id="dayPanelName"></h3>
+            <span class="day-panel-meta" id="dayPanelMeta"></span>
+          </div>
+          <img class="day-panel-img" id="dayPanelImg" src="" alt="">
+        </div>
+        <div class="day-panel-list" id="dayPanelList"></div>
+        <div class="day-panel-actions">
+          <button class="btn btn-secondary" type="button" id="dayOpenBtn">Open recipe</button>
+          <button class="btn btn-primary" type="button" id="dayShareBtn">Share list</button>
+        </div>
+      </div>
     </section>
 
     <!-- ============ PANTRY ============ -->
@@ -123,6 +138,14 @@
         <input class="search" id="pantrySearch" type="search" placeholder="Search ingredients" aria-label="Search ingredients">
         <span class="pantry-count" id="pantryCount"></span>
       </div>
+      <section class="kit">
+        <h2 class="group-title kit-title">
+          <span class="label">My kitchen</span>
+          <span class="group-count" id="kitCount"></span>
+        </h2>
+        <p class="kit-hint">Turn off anything you don't have. Recipes that need it are hidden everywhere.</p>
+        <div class="kit-row" id="kitRow"></div>
+      </section>
       <div id="pantryGroups"></div>
       <p class="empty" id="pantryEmpty" hidden>No ingredient matches that search.</p>
     </section>
@@ -274,7 +297,7 @@
 
 <div class="visually-hidden" id="liveRegion" role="status" aria-live="polite"></div>
 
-<script src="icons.js?v=20260901173441"></script>
-<script src="app.js?v=20260901173441"></script>
+<script src="icons.js?v=20260901175832"></script>
+<script src="app.js?v=20260901175832"></script>
 </body>
 </html>

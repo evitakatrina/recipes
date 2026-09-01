@@ -902,6 +902,69 @@ a{color:inherit;text-decoration:none}
 .sheet-footer .btn-secondary svg{width:17px;height:17px;flex:none}
 .btn-secondary.is-planned{background:var(--have-soft);color:var(--have)}
 
+
+/* ============================ my kitchen ============================ */
+.kit{padding:0 0 8px}
+.kit-title{cursor:default}
+.kit-hint{padding:0 20px 12px;font-size:var(--t-sm);color:var(--fg-3);max-width:48ch}
+.kit-row{display:flex;gap:8px;overflow-x:auto;padding:0 20px 16px;scrollbar-width:none;border-bottom:1px solid var(--line);margin:0 20px;padding-inline:0}
+.kit-row::-webkit-scrollbar{display:none}
+.kit-chip{
+  flex:0 0 auto;min-height:44px;padding:0 15px;
+  display:inline-flex;align-items:center;gap:8px;
+  border-radius:100px;border:1px solid var(--line);
+  background:var(--surface);color:var(--fg-2);
+  font-size:var(--t-sm);font-weight:500;white-space:nowrap;
+}
+.kit-chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.kit-chip .tick{
+  width:15px;height:15px;flex:none;border-radius:50%;
+  border:1.5px solid var(--line-strong);display:grid;place-items:center;
+}
+.kit-chip .tick svg{width:9px;height:9px;opacity:0}
+.kit-chip[aria-pressed="true"] .tick{background:var(--accent-ink);border-color:var(--accent-ink);color:var(--accent)}
+.kit-chip[aria-pressed="true"] .tick svg{opacity:1}
+
+/* ======================= calendar day detail ======================= */
+.day-panel{
+  margin:18px 20px 0;padding:16px;
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r-md);
+}
+.day-panel-head{display:flex;gap:14px;align-items:flex-start;justify-content:space-between}
+.day-panel-date{
+  font-size:var(--t-2xs);font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);
+}
+.day-panel-name{
+  font-family:var(--display);font-weight:800;
+  font-size:var(--t-lg);letter-spacing:-.03em;line-height:1.12;
+  margin:6px 0 4px;text-wrap:balance;
+}
+.day-panel-meta{font-size:var(--t-xs);color:var(--fg-3)}
+.day-panel-img{
+  width:66px;height:66px;flex:none;border-radius:10px;
+  object-fit:cover;border:1px solid var(--line);
+}
+.day-panel-list{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.day-panel-list h4{
+  font-size:var(--t-2xs);font-weight:600;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--fg-3);margin-bottom:10px;
+}
+.buy-item{display:flex;gap:10px;align-items:flex-start;padding:6px 0;font-size:var(--t-md);line-height:1.4}
+.buy-item::before{
+  content:"";width:6px;height:6px;border-radius:50%;flex:none;
+  background:var(--accent);margin-top:8px;
+}
+.buy-none{font-size:var(--t-md);color:var(--have);font-weight:600}
+.day-panel-actions{display:flex;gap:10px;margin-top:16px}
+.day-panel-actions .btn{flex:1;min-height:46px;font-size:var(--t-md)}
+
+/* the grid itself, calmer */
+.cal-grid{gap:6px}
+.day{border-radius:12px}
+.day.selected{outline:2.5px solid var(--accent);outline-offset:1px}
+
 /* ============================ motion opt-out ============================ */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{

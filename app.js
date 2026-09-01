@@ -7,6 +7,7 @@
     openShelves: "sift_open_shelves_v1",
     plan: "sift_plan_v1",
     stepsDone: "sift_steps_v1",
+    kit: "sift_kit_v1",
   };
 
   const CARD_W = 150, CARD_GAP = 14, REEL_STEP = CARD_W + CARD_GAP;
@@ -18,6 +19,18 @@
   let plan = loadJSON(STORAGE_KEYS.plan, {});          // { "2026-09-01": recipeId }
   let stepsDone = loadJSON(STORAGE_KEYS.stepsDone, {});// { recipeId: [stepIndex] }
   let armedDate = null;                                // a day waiting for a recipe
+  let selectedDate = null;                             // day shown in the detail panel
+
+  // Equipment you own. Anything switched off hides the recipes that need it.
+  const KIT = ["oven","air fryer","slow cooker","pressure cooker","blender","grill","microwave"];
+  let kit = new Set(loadJSON(STORAGE_KEYS.kit, KIT));
+
+  // Every list in the app reads from this, so an appliance you do not have
+  // never shows up anywhere.
+  function usable(r) {
+    return (r.equipment || []).every(e => kit.has(e));
+  }
+  const COOKABLE = () => RECIPES.filter(usable);
   let currentSheetRecipe = null;
   let wheelSpinning = false;
   let lastFocused = null;
@@ -213,8 +226,9 @@
   function recipeOfTheDay() {
     const d = new Date();
     const seed = d.getFullYear() * 372 + d.getMonth() * 31 + d.getDate();
-    const sharp = RECIPES.filter(r => (r.imgW || 0) >= 1000);
-    const pool = sharp.length ? sharp : RECIPES;
+    const ok = COOKABLE();
+    const sharp = ok.filter(r => (r.imgW || 0) >= 1000);
+    const pool = sharp.length ? sharp : (ok.length ? ok : RECIPES);
     return pool[seed % pool.length];
   }
 
@@ -239,7 +253,7 @@
     }
 
     // "Ready to cook" — best pantry matches
-    const scored = RECIPES
+    const scored = COOKABLE()
       .map(x => ({ r: x, m: matchStats(x) }))
       .filter(x => x.m.pct !== null && x.m.pct >= 50)
       .sort((a, b) => b.m.pct - a.m.pct || a.r.name.localeCompare(b.r.name))
@@ -264,8 +278,8 @@
     // -50% keyframe loops seamlessly.
     const track = $("marqueeTrack");
     track.innerHTML = "";
-    const shuffled = [...RECIPES].sort(() => Math.random() - 0.5);
-    $("allCount").textContent = RECIPES.length + " recipes";
+    const shuffled = [...COOKABLE()].sort(() => Math.random() - 0.5);
+    $("allCount").textContent = COOKABLE().length + " recipes";
     [...shuffled, ...shuffled].forEach(x => track.appendChild(recipeCard(x, x.cuisine || x.meals[0], false)));
     // duplicated cards are decorative for assistive tech
     [...track.children].slice(shuffled.length).forEach(c => c.setAttribute("aria-hidden", "true"));
@@ -283,13 +297,13 @@
 
     function listFor(cat) {
       if (cat === "Ready to cook") {
-        return RECIPES
+        return COOKABLE()
           .map(r => ({ r, m: matchStats(r) }))
           .filter(x => x.m.pct !== null && x.m.pct >= 50)
           .sort((a, b) => b.m.pct - a.m.pct || a.r.name.localeCompare(b.r.name))
           .map(x => x.r);
       }
-      return cat === "All" ? RECIPES : RECIPES.filter(r => r.category === cat);
+      return cat === "All" ? COOKABLE() : COOKABLE().filter(r => r.category === cat);
     }
 
     function draw() {
@@ -338,7 +352,7 @@
   const TICK = '<span class="tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
 
   function readyCount() {
-    return RECIPES.filter(r => { const m = matchStats(r); return m.pct !== null && m.pct >= 50; }).length;
+    return COOKABLE().filter(r => { const m = matchStats(r); return m.pct !== null && m.pct >= 50; }).length;
   }
 
   function updatePantryCount() {
@@ -359,6 +373,37 @@
       btn.disabled = n === 0;
       bar.classList.toggle("show", !$("view-pantry").hidden);
     }
+  }
+
+  function renderKit() {
+    const row = $("kitRow");
+    row.innerHTML = "";
+    KIT.forEach(item => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "kit-chip";
+      chip.setAttribute("aria-pressed", kit.has(item) ? "true" : "false");
+      chip.innerHTML = TICK + "<span></span>";
+      chip.lastChild.textContent = item;
+      chip.addEventListener("click", () => {
+        const now = !kit.has(item);
+        if (now) kit.add(item); else kit.delete(item);
+        save(STORAGE_KEYS.kit, [...kit]);
+        chip.setAttribute("aria-pressed", now ? "true" : "false");
+        updateKitCount();
+        renderToday(); renderBrowse(); renderPlan();
+        updatePantryCount();
+        announce(COOKABLE().length + " recipes you can cook with your kit");
+      });
+      row.appendChild(chip);
+    });
+    updateKitCount();
+  }
+
+  function updateKitCount() {
+    const hidden = RECIPES.length - COOKABLE().length;
+    $("kitCount").textContent = hidden ? hidden + " recipes hidden" : COOKABLE().length + " recipes";
+    $("kitCount").classList.toggle("has", hidden > 0);
   }
 
   function renderPantry() {
@@ -449,6 +494,7 @@
       container.appendChild(wrap);
     });
 
+    renderKit();
     updateShelfCounts();
     updatePantryCount();
 
@@ -541,14 +587,63 @@
       num.className = "day-num"; num.textContent = d;
       cell.appendChild(num);
 
+      if (key === selectedDate) cell.classList.add("selected");
       cell.addEventListener("click", () => {
-        if (r) { openSheet(r, cell); return; }
+        if (r) {
+          // show the day, not the recipe - the list of what to buy is the point
+          selectedDate = (selectedDate === key) ? null : key;
+          armedDate = null;
+          renderPlan();
+          if (selectedDate) $("dayPanel").scrollIntoView({ behavior: "smooth", block: "nearest" });
+          return;
+        }
+        selectedDate = null;
         armedDate = (armedDate === key) ? null : key;
         renderPlan();
         if (armedDate) announce("Now pick a recipe for " + prettyDate(armedDate));
       });
       grid.appendChild(cell);
     }
+    renderDayPanel();
+  }
+
+  function renderDayPanel() {
+    const panel = $("dayPanel");
+    const r = selectedDate ? RECIPES.find(x => x.id === plan[selectedDate]) : null;
+    if (!r) { panel.hidden = true; return; }
+    panel.hidden = false;
+
+    $("dayPanelDate").textContent = prettyDate(selectedDate) === "today"
+      ? "Cooking today" : "Cooking " + prettyDate(selectedDate);
+    $("dayPanelName").textContent = r.name;
+    $("dayPanelMeta").textContent = [fmtTime(r.time), r.source].filter(Boolean).join(" · ");
+    const img = $("dayPanelImg");
+    img.src = r.image; img.alt = "";
+
+    const missing = shoppingList(r);
+    const list = $("dayPanelList");
+    list.innerHTML = "";
+    const h = document.createElement("h4");
+    h.textContent = missing.length ? "Still to buy — " + missing.length : "Shopping list";
+    list.appendChild(h);
+    if (!missing.length) {
+      const p2 = document.createElement("p");
+      p2.className = "buy-none";
+      p2.textContent = "You already have everything.";
+      list.appendChild(p2);
+    } else {
+      missing.forEach(m => {
+        const li = document.createElement("div");
+        li.className = "buy-item";
+        const sp = document.createElement("span");
+        sp.textContent = m.text;
+        li.appendChild(sp);
+        list.appendChild(li);
+      });
+    }
+    $("dayShareBtn").disabled = !missing.length;
+    $("dayOpenBtn").onclick = () => openSheet(r, $("dayOpenBtn"));
+    $("dayShareBtn").onclick = () => { currentSheetRecipe = r; sendShoppingList(); };
   }
 
   function setupPlan() {
@@ -631,7 +726,7 @@
     }
 
     function baseFor(meal) {
-      return meal.m ? RECIPES.filter(r => (r.meals || [r.category]).includes(meal.m)) : RECIPES;
+      return meal.m ? COOKABLE().filter(r => (r.meals || [r.category]).includes(meal.m)) : COOKABLE();
     }
 
     function recomputePool() {
