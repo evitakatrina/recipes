@@ -252,7 +252,7 @@
       heroMatch.hidden = true;
     }
 
-    // "Ready to cook" — best pantry matches
+    // "Ready to cook": best pantry matches
     const scored = COOKABLE()
       .map(x => ({ r: x, m: matchStats(x) }))
       .filter(x => x.m.pct !== null && x.m.pct >= 50)
@@ -368,7 +368,7 @@
       bar.classList.remove("show");
     } else {
       btn.textContent = n === 0
-        ? "Keep going — no matches yet"
+        ? "Keep going, no matches yet"
         : "Show " + n + (n === 1 ? " recipe" : " recipes") + " I can cook \u2192";
       btn.disabled = n === 0;
       bar.classList.toggle("show", !$("view-pantry").hidden);
@@ -541,7 +541,7 @@
 
     const hint = $("calHint");
     if (armedDate) {
-      hint.textContent = "Pick a recipe for " + prettyDate(armedDate) + " — open Browse or Spin, then tap Plan.";
+      hint.textContent = "Pick a recipe for " + prettyDate(armedDate) + ". Open Browse or Spin, then tap Plan.";
       hint.classList.add("armed");
     } else {
       hint.textContent = "Tap a day to plan a meal for it. Tap a planned day to open the recipe.";
@@ -613,7 +613,7 @@
     const list = $("dayPanelList");
     list.innerHTML = "";
     const h = document.createElement("h4");
-    h.textContent = missing.length ? "Still to buy — " + missing.length : "Shopping list";
+    h.textContent = missing.length ? "Still to buy: " + missing.length : "Shopping list";
     list.appendChild(h);
     if (!missing.length) {
       const p2 = document.createElement("p");
@@ -870,18 +870,14 @@
       renderPlan(); renderToday();
     });
 
-    $("planBtn").addEventListener("click", () => {
+    $("planClear").addEventListener("click", e => {
+      e.preventDefault();
       const r = currentSheetRecipe;
       if (!r) return;
-      const key = armedDate || todayISO();
-      if (plan[key] === r.id) delete plan[key]; else plan[key] = r.id;
+      Object.keys(plan).forEach(k => { if (plan[k] === r.id) delete plan[k]; });
       save(STORAGE_KEYS.plan, plan);
-      const set = plan[key] === r.id;
-      announce(set ? r.name + " planned for " + prettyDate(key) : "Removed from " + prettyDate(key));
-      armedDate = null;
-      refreshPlanButton();
-      renderPlan();
-      renderToday();
+      announce("Removed from your plan");
+      refreshPlanButton(); renderPlan(); renderToday();
     });
 
     document.addEventListener("keydown", e => {
@@ -907,16 +903,24 @@
     const r = currentSheetRecipe;
     if (!r) return;
     const key = armedDate || todayISO();
-    const btn = $("planBtn"), lbl = $("planBtnLabel");
-    const already = plan[key] === r.id;
-    lbl.textContent = already ? "Planned" : (armedDate ? prettyDate(key) : "Today");
+    const plannedOn = Object.keys(plan).find(k => plan[k] === r.id);
+    const row = $("planRow"), val = $("planValue"), go = $("planGo"), clear = $("planClear");
+
+    if (plannedOn) {
+      row.classList.add("is-planned");
+      val.textContent = prettyDate(plannedOn) === "today" ? "Today" : prettyDate(plannedOn);
+      go.textContent = "Planned";
+      clear.hidden = false;
+      clear.textContent = "Remove from " + prettyDate(plannedOn);
+    } else {
+      row.classList.remove("is-planned");
+      val.textContent = prettyDate(key) === "today" ? "Today" : prettyDate(key);
+      go.textContent = "Plan";
+      clear.hidden = true;
+    }
     const pick = $("planDate");
-    pick.value = key;
+    pick.value = plannedOn || key;
     pick.min = todayISO();
-    btn.classList.toggle("is-planned", already);
-    btn.setAttribute("aria-label", already
-      ? "Remove from " + prettyDate(key)
-      : "Plan this for " + prettyDate(key));
   }
 
   function refreshSheetFooter() {
@@ -940,9 +944,9 @@
 
     $("sheetImg").src = recipe.image;
     $("sheetImg").alt = recipe.name;
-    $("sheetSource").textContent = [recipe.source, recipe.meals[0], recipe.cuisine].filter(Boolean).join(" · ");
-    const t = $("sheetTime");
-    if (recipe.time) { t.hidden = false; t.textContent = "· " + fmtTime(recipe.time); } else t.hidden = true;
+    $("sheetSource").textContent = [recipe.source, recipe.meals[0], recipe.cuisine, fmtTime(recipe.time)]
+      .filter(Boolean).join(" · ");
+    $("sheetTime").hidden = true;
     $("sheetName").textContent = recipe.name;
     $("sheetBarTitle").textContent = recipe.name;
     $("sheetBar").classList.remove("show");
@@ -1065,7 +1069,7 @@
   }
 
   function listText(r, missing) {
-    return "Shopping list — " + r.name + "\n\n"
+    return "Shopping list for " + r.name + "\n\n"
       + missing.map(m => "\u2022 " + m.text).join("\n")
       + "\n\n" + r.source + "\n" + r.url;
   }
@@ -1081,7 +1085,7 @@
 
     if (navigator.share) {
       try {
-        await navigator.share({ title: "Shopping list — " + r.name, text });
+        await navigator.share({ title: "Shopping list for " + r.name, text });
         announce("Shopping list shared");
         return;
       } catch (err) {

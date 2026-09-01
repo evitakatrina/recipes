@@ -9,11 +9,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Sift">
-<title>Sift — Gluten-Free, Dairy-Free Recipes</title>
+<title>Sift, gluten free and dairy free recipes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Instrument+Sans:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="style.css?v=20260901183741">
+<link rel="stylesheet" href="style.css?v=20260901184535">
 </head>
 <body>
 
@@ -272,6 +272,16 @@
         </div>
         <ul class="ing-list" id="ingredientList"></ul>
 
+        <label class="plan-row" id="planRow">
+          <span class="plan-when">
+            <span class="plan-label">Cook this on</span>
+            <span class="plan-value" id="planValue">Today</span>
+          </span>
+          <span class="plan-go" id="planGo">Plan</span>
+          <input type="date" id="planDate">
+        </label>
+        <button class="plan-clear" id="planClear" type="button" hidden>Remove from plan</button>
+
         <div class="ing-head" id="methodHead" hidden>
           <h3>Method</h3>
           <span class="ing-count" id="stepsCount"></span>
@@ -288,21 +298,13 @@
         <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5V4"/><path d="M8.4 7.6L12 4l3.6 3.6"/><path d="M5 13.5v4.6a2 2 0 002 2h10a2 2 0 002-2v-4.6"/></svg>
         <span id="calendarBtnLabel">Add to my list</span>
       </button>
-      <label class="btn btn-secondary" id="planPick" aria-label="Plan this recipe for a day">
-        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.6" y="5.2" width="16.8" height="15.2" rx="2.6"/><path d="M3.6 10h16.8M8 3.4v3.4M16 3.4v3.4"/></svg>
-        <input type="date" id="planDate">
-      </label>
-      <button class="btn btn-secondary" id="planBtn" type="button" aria-label="Plan this recipe">
-        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.6" y="5.2" width="16.8" height="15.2" rx="2.6"/><path d="M3.6 10h16.8M8 3.4v3.4M16 3.4v3.4"/></svg>
-        <span id="planBtnLabel">Today</span>
-      </button>
     </div>
   </div>
 </div>
 
 <div class="visually-hidden" id="liveRegion" role="status" aria-live="polite"></div>
 
-<script src="icons.js?v=20260901183741"></script>
-<script src="app.js?v=20260901183741"></script>
+<script src="icons.js?v=20260901184535"></script>
+<script src="app.js?v=20260901184535"></script>
 </body>
 </html>
