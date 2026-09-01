@@ -8,6 +8,7 @@
     plan: "sift_plan_v1",
     stepsDone: "sift_steps_v1",
     kit: "sift_kit_v1",
+    view: "sift_view_v1",
   };
 
   const CARD_W = 150, CARD_GAP = 14, REEL_STEP = CARD_W + CARD_GAP;
@@ -185,8 +186,11 @@
       });
       window.scrollTo({ top: 0, behavior: "instant" });
       $("pantryAction").classList.toggle("show", view === "pantry" && pantry.size > 0);
+      save(STORAGE_KEYS.view, view);      // survive a refresh
     };
     tabs.forEach(t => t.addEventListener("click", () => switchTo(t.dataset.view)));
+    const last = loadJSON(STORAGE_KEYS.view, "today");
+    if (tabs.some(t => t.dataset.view === last) && last !== "today") switchTo(last);
   }
 
   // ---------- Cards ----------
@@ -858,16 +862,16 @@
       if (e.target.id === "sheetScrim") closeSheet();
     });
     $("calendarBtn").addEventListener("click", sendShoppingList);
-    $("planDate").addEventListener("change", e => {
-      const r = currentSheetRecipe;
-      const key = e.target.value;
-      if (!r || !key) return;
-      plan[key] = r.id;
-      save(STORAGE_KEYS.plan, plan);
-      announce(r.name + " planned for " + prettyDate(key));
-      armedDate = null;
-      refreshPlanButton();
-      renderPlan(); renderToday();
+    $("planRow").addEventListener("click", () => {
+      if ($("miniCal").hidden) openMini(); else closeMini();
+    });
+    $("miniPrev").addEventListener("click", e => {
+      e.stopPropagation();
+      miniMonth = new Date(miniMonth.getFullYear(), miniMonth.getMonth()-1, 1); renderMini();
+    });
+    $("miniNext").addEventListener("click", e => {
+      e.stopPropagation();
+      miniMonth = new Date(miniMonth.getFullYear(), miniMonth.getMonth()+1, 1); renderMini();
     });
 
     $("planClear").addEventListener("click", e => {
@@ -899,6 +903,67 @@
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }
 
+  let miniMonth = new Date();
+
+  function renderMini() {
+    const r = currentSheetRecipe;
+    if (!r) return;
+    const dow = $("miniDow");
+    if (!dow.childElementCount) {
+      ["M","T","W","T","F","S","S"].forEach(d => {
+        const sp = document.createElement("span"); sp.textContent = d; dow.appendChild(sp);
+      });
+    }
+    const y = miniMonth.getFullYear(), m = miniMonth.getMonth();
+    $("miniTitle").textContent = miniMonth.toLocaleDateString(undefined, { month:"long", year:"numeric" });
+
+    const grid = $("miniGrid");
+    grid.innerHTML = "";
+    const lead = (new Date(y, m, 1).getDay() + 6) % 7;
+    const days = new Date(y, m+1, 0).getDate();
+    const chosenKey = Object.keys(plan).find(k => plan[k] === r.id);
+
+    for (let i = 0; i < lead; i++) {
+      const b = document.createElement("span"); b.className = "mini-day blank"; grid.appendChild(b);
+    }
+    for (let d = 1; d <= days; d++) {
+      const key = iso(new Date(y, m, d));
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "mini-day"
+        + (key === todayISO() ? " today" : "")
+        + (key < todayISO() ? " past" : "")
+        + (plan[key] && plan[key] !== r.id ? " busy" : "")
+        + (key === chosenKey ? " chosen" : "");
+      btn.textContent = d;
+      btn.setAttribute("aria-label", prettyDate(key) + (plan[key] ? ", already planned" : ""));
+      btn.addEventListener("click", () => {
+        Object.keys(plan).forEach(k => { if (plan[k] === r.id) delete plan[k]; });
+        plan[key] = r.id;
+        save(STORAGE_KEYS.plan, plan);
+        announce(r.name + " planned for " + prettyDate(key));
+        armedDate = null;
+        closeMini();
+        refreshPlanButton(); renderPlan(); renderToday();
+      });
+      grid.appendChild(btn);
+    }
+  }
+
+  function openMini() {
+    const r = currentSheetRecipe;
+    const chosen = r && Object.keys(plan).find(k => plan[k] === r.id);
+    miniMonth = chosen ? new Date(chosen + "T12:00:00") : new Date();
+    $("miniCal").hidden = false;
+    $("planRow").setAttribute("aria-expanded", "true");
+    renderMini();
+    $("miniCal").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+  function closeMini() {
+    $("miniCal").hidden = true;
+    $("planRow").setAttribute("aria-expanded", "false");
+  }
+
   function refreshPlanButton() {
     const r = currentSheetRecipe;
     if (!r) return;
@@ -918,9 +983,6 @@
       go.textContent = "Plan";
       clear.hidden = true;
     }
-    const pick = $("planDate");
-    pick.value = plannedOn || key;
-    pick.min = todayISO();
   }
 
   function refreshSheetFooter() {
@@ -1041,6 +1103,7 @@
     });
 
     refreshSheetFooter();
+    closeMini();
     refreshPlanButton();
     $("sheetScrim").classList.add("open");
     $("sheet").querySelector(".sheet-scroll").scrollTop = 0;
