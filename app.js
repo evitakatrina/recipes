@@ -391,7 +391,7 @@
         save(STORAGE_KEYS.kit, [...kit]);
         chip.setAttribute("aria-pressed", now ? "true" : "false");
         updateKitCount();
-        renderToday(); renderBrowse(); renderPlan();
+        renderToday(); renderBrowse(); renderPlan(); refreshWheel();
         updatePantryCount();
         announce(COOKABLE().length + " recipes you can cook with your kit");
       });
@@ -570,18 +570,7 @@
         const img = document.createElement("img");
         img.className = "day-img"; img.src = r.image; img.alt = ""; img.loading = "lazy";
         img.addEventListener("error", () => img.remove(), { once: true });
-        const nm = document.createElement("span");
-        nm.className = "day-name"; nm.textContent = r.name;
-        const x = document.createElement("span");
-        x.className = "day-clear";
-        x.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>';
-        x.addEventListener("click", e => {
-          e.stopPropagation();
-          delete plan[key]; save(STORAGE_KEYS.plan, plan);
-          renderPlan(); renderToday();
-          announce("Cleared " + prettyDate(key));
-        });
-        cell.append(img, nm, x);
+        cell.appendChild(img);
       }
       const num = document.createElement("span");
       num.className = "day-num"; num.textContent = d;
@@ -643,6 +632,13 @@
     }
     $("dayShareBtn").disabled = !missing.length;
     $("dayOpenBtn").onclick = () => openSheet(r, $("dayOpenBtn"));
+    $("dayClearBtn").onclick = () => {
+      delete plan[selectedDate];
+      save(STORAGE_KEYS.plan, plan);
+      announce("Removed from " + prettyDate(selectedDate));
+      selectedDate = null;
+      renderPlan(); renderToday();
+    };
     $("dayShareBtn").onclick = () => { currentSheetRecipe = r; sendShoppingList(); };
   }
 
@@ -651,6 +647,8 @@
     $("calNext").addEventListener("click", () => { calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth()+1, 1); renderPlan(); });
     renderPlan();
   }
+
+  let refreshWheel = () => {};   // set once the deck is built
 
   // ---------- Spin: a fanned deck ----------
   // Seven slots held in an arc. Spinning riffles the fan while the faces
@@ -836,6 +834,10 @@
     buildMealRow();
     buildDeck();
     updateHint();
+
+    // rebuilt whenever the kitchen changes, so an appliance you switched off
+    // is gone from the deck and from the meal counts too
+    refreshWheel = () => { buildMealRow(); recomputePool(); };
   }
 
   // ---------- Sheet ----------
@@ -856,6 +858,18 @@
       if (e.target.id === "sheetScrim") closeSheet();
     });
     $("calendarBtn").addEventListener("click", sendShoppingList);
+    $("planDate").addEventListener("change", e => {
+      const r = currentSheetRecipe;
+      const key = e.target.value;
+      if (!r || !key) return;
+      plan[key] = r.id;
+      save(STORAGE_KEYS.plan, plan);
+      announce(r.name + " planned for " + prettyDate(key));
+      armedDate = null;
+      refreshPlanButton();
+      renderPlan(); renderToday();
+    });
+
     $("planBtn").addEventListener("click", () => {
       const r = currentSheetRecipe;
       if (!r) return;
@@ -896,6 +910,9 @@
     const btn = $("planBtn"), lbl = $("planBtnLabel");
     const already = plan[key] === r.id;
     lbl.textContent = already ? "Planned" : (armedDate ? prettyDate(key) : "Today");
+    const pick = $("planDate");
+    pick.value = key;
+    pick.min = todayISO();
     btn.classList.toggle("is-planned", already);
     btn.setAttribute("aria-label", already
       ? "Remove from " + prettyDate(key)

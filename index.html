@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Instrument+Sans:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="style.css?v=20260901180848">
+<link rel="stylesheet" href="style.css?v=20260901181842">
 </head>
 <body>
 
@@ -125,8 +125,9 @@
         </div>
         <div class="day-panel-list" id="dayPanelList"></div>
         <div class="day-panel-actions">
-          <button class="btn btn-secondary" type="button" id="dayOpenBtn">Open recipe</button>
           <button class="btn btn-primary" type="button" id="dayShareBtn">Share list</button>
+          <button class="btn btn-secondary" type="button" id="dayOpenBtn">Open recipe</button>
+          <button class="btn btn-quiet" type="button" id="dayClearBtn">Remove</button>
         </div>
       </div>
     </section>
@@ -287,6 +288,10 @@
         <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5V4"/><path d="M8.4 7.6L12 4l3.6 3.6"/><path d="M5 13.5v4.6a2 2 0 002 2h10a2 2 0 002-2v-4.6"/></svg>
         <span id="calendarBtnLabel">Add to my list</span>
       </button>
+      <label class="btn btn-secondary" id="planPick" aria-label="Plan this recipe for a day">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.6" y="5.2" width="16.8" height="15.2" rx="2.6"/><path d="M3.6 10h16.8M8 3.4v3.4M16 3.4v3.4"/></svg>
+        <input type="date" id="planDate">
+      </label>
       <button class="btn btn-secondary" id="planBtn" type="button" aria-label="Plan this recipe">
         <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.6" y="5.2" width="16.8" height="15.2" rx="2.6"/><path d="M3.6 10h16.8M8 3.4v3.4M16 3.4v3.4"/></svg>
         <span id="planBtnLabel">Today</span>
@@ -297,7 +302,7 @@
 
 <div class="visually-hidden" id="liveRegion" role="status" aria-live="polite"></div>
 
-<script src="icons.js?v=20260901180848"></script>
-<script src="app.js?v=20260901180848"></script>
+<script src="icons.js?v=20260901181842"></script>
+<script src="app.js?v=20260901181842"></script>
 </body>
 </html>

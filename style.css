@@ -850,58 +850,98 @@ a{color:inherit;text-decoration:none}
 .cal-hint{padding:0 20px 12px;font-size:var(--t-sm);color:var(--fg-3);max-width:46ch}
 .cal-hint.armed{color:var(--accent);font-weight:600}
 .cal-dow{
-  display:grid;grid-template-columns:repeat(7,1fr);gap:5px;
-  padding:0 16px 6px;
+  display:grid;grid-template-columns:repeat(7,1fr);gap:6px;
+  padding:0 18px 10px;
 }
 .cal-dow span{
   text-align:center;font-size:var(--t-2xs);font-weight:600;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--fg-3);
+  letter-spacing:.06em;color:var(--fg-3);
 }
 .cal-grid{
-  display:grid;grid-template-columns:repeat(7,1fr);gap:5px;
-  padding:0 16px;
+  display:grid;grid-template-columns:repeat(7,1fr);gap:6px 4px;
+  padding:0 18px;
 }
+
+/* A day is a circle on the page, not a boxed cell. Empty days are just the
+   date; a planned day fills with the dish. No frames, no chrome. */
 .day{
-  position:relative;aspect-ratio:1/1.18;
-  border-radius:10px;overflow:hidden;
-  background:var(--surface);border:1px solid var(--line);
-  display:flex;align-items:flex-start;justify-content:flex-end;
-  padding:4px;
+  position:relative;
+  aspect-ratio:1/1;
+  border-radius:50%;
+  background:transparent;border:none;
+  display:grid;place-items:center;
+  overflow:hidden;
+  min-height:44px;
 }
-.day.blank{background:transparent;border-color:transparent}
+.day.blank{visibility:hidden}
 .day-num{
   position:relative;z-index:2;
-  font-size:var(--t-2xs);font-weight:600;
-  color:var(--fg-3);font-variant-numeric:tabular-nums;
-  line-height:1;padding:2px 3px;border-radius:4px;
+  font-size:var(--t-md);font-weight:500;
+  color:var(--fg-2);font-variant-numeric:tabular-nums;line-height:1;
 }
-.day.today .day-num{background:var(--accent);color:var(--accent-ink)}
 .day-img{
   position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;z-index:0;
+  object-fit:cover;z-index:0;border-radius:50%;
 }
 .day.planned::after{
-  content:"";position:absolute;inset:0;z-index:1;
-  background:linear-gradient(180deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,.1) 40%,rgba(0,0,0,.72) 100%);
+  content:"";position:absolute;inset:0;z-index:1;border-radius:50%;
+  background:rgba(0,0,0,.42);
 }
-.day-name{
-  position:absolute;left:3px;right:3px;bottom:3px;z-index:2;
-  font-size:9.5px;line-height:1.15;font-weight:600;color:#fff;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+.day.planned .day-num{color:#fff;font-weight:700}
+.day.today .day-num{color:var(--accent);font-weight:700}
+.day.today::before{
+  content:"";position:absolute;inset:0;z-index:1;border-radius:50%;
+  box-shadow:inset 0 0 0 2px var(--accent);
 }
-.day.armed{border-color:var(--accent);border-width:2px}
-.day-clear{
-  position:absolute;left:3px;top:3px;z-index:3;
-  width:18px;height:18px;border-radius:50%;
-  background:rgba(0,0,0,.55);color:#fff;
-  display:grid;place-items:center;
+.day.selected::before{
+  content:"";position:absolute;inset:0;z-index:3;border-radius:50%;
+  box-shadow:inset 0 0 0 2.5px var(--fg);
 }
-.day-clear svg{width:9px;height:9px}
+.day.armed::before{
+  content:"";position:absolute;inset:0;z-index:3;border-radius:50%;
+  box-shadow:inset 0 0 0 2px var(--accent);
+}
+.day:active{transform:scale(.93)}
+.day{transition:transform .14s ease}
 
-.sheet-footer .btn-secondary{flex:0 0 auto;gap:7px;padding:0 15px}
-.sheet-footer .btn-secondary svg{width:17px;height:17px;flex:none}
-.btn-secondary.is-planned{background:var(--have-soft);color:var(--have)}
-
+/* ======================= calendar day detail ======================= */
+.day-panel{
+  margin:22px 20px 0;padding:0;
+  background:transparent;border:none;
+}
+.day-panel-head{display:flex;gap:14px;align-items:flex-start;justify-content:space-between}
+.day-panel-date{
+  font-size:var(--t-sm);font-weight:600;color:var(--accent);
+}
+.day-panel-name{
+  font-family:var(--display);font-weight:800;
+  font-size:var(--t-xl);letter-spacing:-.032em;line-height:1.1;
+  margin:6px 0 5px;text-wrap:balance;
+}
+.day-panel-meta{font-size:var(--t-sm);color:var(--fg-3)}
+.day-panel-img{
+  width:78px;height:78px;flex:none;border-radius:14px;
+  object-fit:cover;
+}
+.day-panel-list{margin-top:20px;border-top:1px solid var(--line);padding-top:16px}
+.day-panel-list h4{
+  font-size:var(--t-md);font-weight:600;color:var(--fg);
+  margin-bottom:12px;letter-spacing:0;text-transform:none;
+}
+.buy-item{
+  display:flex;gap:11px;align-items:flex-start;
+  padding:8px 0;font-size:var(--t-md);line-height:1.45;color:var(--fg-2);
+}
+.buy-item::before{
+  content:"";width:5px;height:5px;border-radius:50%;flex:none;
+  background:var(--fg-3);margin-top:9px;
+}
+.buy-none{font-size:var(--t-md);color:var(--have);font-weight:600}
+.day-panel-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.day-panel-actions .btn{flex:1 1 128px;min-height:48px;font-size:var(--t-md)}
+.btn-quiet{
+  background:none;color:var(--fg-3);border:1px solid var(--line);
+}
 
 /* ============================ my kitchen ============================ */
 .kit{padding:0 0 8px}
@@ -926,45 +966,6 @@ a{color:inherit;text-decoration:none}
 .kit-chip[aria-pressed="true"] .tick svg{opacity:1}
 
 /* ======================= calendar day detail ======================= */
-.day-panel{
-  margin:18px 20px 0;padding:16px;
-  background:var(--surface);border:1px solid var(--line);
-  border-radius:var(--r-md);
-}
-.day-panel-head{display:flex;gap:14px;align-items:flex-start;justify-content:space-between}
-.day-panel-date{
-  font-size:var(--t-2xs);font-weight:600;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--accent);
-}
-.day-panel-name{
-  font-family:var(--display);font-weight:800;
-  font-size:var(--t-lg);letter-spacing:-.03em;line-height:1.12;
-  margin:6px 0 4px;text-wrap:balance;
-}
-.day-panel-meta{font-size:var(--t-xs);color:var(--fg-3)}
-.day-panel-img{
-  width:66px;height:66px;flex:none;border-radius:10px;
-  object-fit:cover;border:1px solid var(--line);
-}
-.day-panel-list{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
-.day-panel-list h4{
-  font-size:var(--t-2xs);font-weight:600;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--fg-3);margin-bottom:10px;
-}
-.buy-item{display:flex;gap:10px;align-items:flex-start;padding:6px 0;font-size:var(--t-md);line-height:1.4}
-.buy-item::before{
-  content:"";width:6px;height:6px;border-radius:50%;flex:none;
-  background:var(--accent);margin-top:8px;
-}
-.buy-none{font-size:var(--t-md);color:var(--have);font-weight:600}
-.day-panel-actions{display:flex;gap:10px;margin-top:16px}
-.day-panel-actions .btn{flex:1;min-height:46px;font-size:var(--t-md)}
-
-/* the grid itself, calmer */
-.cal-grid{gap:6px}
-.day{border-radius:12px}
-.day.selected{outline:2.5px solid var(--accent);outline-offset:1px}
-
 /* ============================ motion opt-out ============================ */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{
