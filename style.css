@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Sift — editorial identity, light by default
+   Sift, editorial identity, light by default
    Warm paper ground. One hot accent. Photography does the talking.
    Type:   Archivo (display, tight + heavy) / Instrument Sans (UI)
    A dark appearance is defined from the same tokens for people whose
@@ -39,7 +39,7 @@
   --display:"Archivo","Helvetica Neue",Arial,sans-serif;
   --ui:"Instrument Sans",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
 
-  /* type scale — rem, so it answers the reader's font-size setting */
+  /* type scale in rem, so it answers the reader's font-size setting */
   --t-2xs:.6875rem;   /* 11 */
   --t-xs:.75rem;      /* 12 */
   --t-sm:.8125rem;    /* 13 */
@@ -516,7 +516,7 @@ a{color:inherit;text-decoration:none}
   opacity:0;transition:opacity .3s ease;
 }
 
-/* resting fan — the middle card sits proud */
+/* resting fan, the middle card sits proud */
 .deck-card{filter:brightness(.72) saturate(.85)}
 .deck-card.is-front{filter:none;z-index:5}
 .deck-card.is-front .deck-name{opacity:1}
@@ -660,7 +660,7 @@ a{color:inherit;text-decoration:none}
   transition:color .16s ease;
 }
 .tab svg{width:23px;height:23px}
-/* active tab is a filled glyph AND accent — never colour alone */
+/* active tab is a filled glyph AND accent, never colour alone */
 .tab .glyph-fill{opacity:0}
 .tab[aria-current="page"]{color:var(--accent);font-weight:600}
 .tab[aria-current="page"] .glyph-fill{opacity:1}
