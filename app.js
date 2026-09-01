@@ -5,6 +5,8 @@
     pantry: "sift_pantry_v1",
     checked: "sift_checked_v1",
     openShelves: "sift_open_shelves_v1",
+    plan: "sift_plan_v1",
+    stepsDone: "sift_steps_v1",
   };
 
   const CARD_W = 150, CARD_GAP = 14, REEL_STEP = CARD_W + CARD_GAP;
@@ -13,6 +15,9 @@
   let pantry = new Set(loadJSON(STORAGE_KEYS.pantry, []));
   let checkedByRecipe = loadJSON(STORAGE_KEYS.checked, {});
   let openShelves = new Set(loadJSON(STORAGE_KEYS.openShelves, []));
+  let plan = loadJSON(STORAGE_KEYS.plan, {});          // { "2026-09-01": recipeId }
+  let stepsDone = loadJSON(STORAGE_KEYS.stepsDone, {});// { recipeId: [stepIndex] }
+  let armedDate = null;                                // a day waiting for a recipe
   let currentSheetRecipe = null;
   let wheelSpinning = false;
   let lastFocused = null;
@@ -33,6 +38,21 @@
   const saveChecked = () => save(STORAGE_KEYS.checked, checkedByRecipe);
 
   function announce(msg) { $("liveRegion").textContent = msg; }
+
+  const iso = d => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  const todayISO = () => iso(new Date());
+  function prettyDate(key) {
+    const [y,m,dd] = key.split("-").map(Number);
+    const d = new Date(y, m-1, dd);
+    if (key === todayISO()) return "today";
+    return d.toLocaleDateString(undefined, { weekday:"short", day:"numeric", month:"short" });
+  }
+  function fmtTime(min) {
+    if (!min) return "";
+    if (min < 60) return min + " min";
+    const h = Math.floor(min/60), r = min % 60;
+    return r ? h + " hr " + r + " min" : h + (h===1 ? " hour" : " hours");
+  }
 
   // ---------- Matching ----------
   // Ingredients with key === null (water, dairy garnishes, serving suggestions)
@@ -110,6 +130,7 @@
     renderBrowse();
     renderPantry();
     setupWheel();
+    setupPlan();
 
     $("startPantryBtn").addEventListener("click", () => switchTo("pantry"));
     $("pantryActionBtn").addEventListener("click", () => {
@@ -459,6 +480,83 @@
     });
   }
 
+  // ---------- Plan ----------
+  let calMonth = new Date();
+
+  function renderPlan() {
+    const dow = $("calDow");
+    if (!dow.childElementCount) {
+      ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].forEach(d => {
+        const s2 = document.createElement("span"); s2.textContent = d; dow.appendChild(s2);
+      });
+    }
+    const y = calMonth.getFullYear(), m = calMonth.getMonth();
+    $("calTitle").textContent = calMonth.toLocaleDateString(undefined, { month:"long", year:"numeric" });
+
+    const hint = $("calHint");
+    if (armedDate) {
+      hint.textContent = "Pick a recipe for " + prettyDate(armedDate) + " — open Browse or Spin, then tap Plan.";
+      hint.classList.add("armed");
+    } else {
+      hint.textContent = "Tap a day to plan a meal for it. Tap a planned day to open the recipe.";
+      hint.classList.remove("armed");
+    }
+
+    const grid = $("calGrid");
+    grid.innerHTML = "";
+    const first = new Date(y, m, 1);
+    const lead = (first.getDay() + 6) % 7;             // weeks start Monday
+    const days = new Date(y, m+1, 0).getDate();
+    const byId = Object.fromEntries(RECIPES.map(r => [r.id, r]));
+
+    for (let i = 0; i < lead; i++) {
+      const b = document.createElement("div"); b.className = "day blank"; grid.appendChild(b);
+    }
+    for (let d = 1; d <= days; d++) {
+      const key = iso(new Date(y, m, d));
+      const r = byId[plan[key]];
+      const cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = "day" + (r ? " planned" : "") + (key === todayISO() ? " today" : "") + (key === armedDate ? " armed" : "");
+      cell.setAttribute("aria-label", prettyDate(key) + (r ? ", " + r.name : ", nothing planned"));
+
+      if (r) {
+        const img = document.createElement("img");
+        img.className = "day-img"; img.src = r.image; img.alt = ""; img.loading = "lazy";
+        img.addEventListener("error", () => img.remove(), { once: true });
+        const nm = document.createElement("span");
+        nm.className = "day-name"; nm.textContent = r.name;
+        const x = document.createElement("span");
+        x.className = "day-clear";
+        x.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>';
+        x.addEventListener("click", e => {
+          e.stopPropagation();
+          delete plan[key]; save(STORAGE_KEYS.plan, plan);
+          renderPlan(); renderToday();
+          announce("Cleared " + prettyDate(key));
+        });
+        cell.append(img, nm, x);
+      }
+      const num = document.createElement("span");
+      num.className = "day-num"; num.textContent = d;
+      cell.appendChild(num);
+
+      cell.addEventListener("click", () => {
+        if (r) { openSheet(r, cell); return; }
+        armedDate = (armedDate === key) ? null : key;
+        renderPlan();
+        if (armedDate) announce("Now pick a recipe for " + prettyDate(armedDate));
+      });
+      grid.appendChild(cell);
+    }
+  }
+
+  function setupPlan() {
+    $("calPrev").addEventListener("click", () => { calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth()-1, 1); renderPlan(); });
+    $("calNext").addEventListener("click", () => { calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth()+1, 1); renderPlan(); });
+    renderPlan();
+  }
+
   // ---------- Spin: a fanned deck ----------
   // Seven slots held in an arc. Spinning riffles the fan while the faces
   // cycle, then the winning slot rises out and squares up.
@@ -663,6 +761,19 @@
       if (e.target.id === "sheetScrim") closeSheet();
     });
     $("calendarBtn").addEventListener("click", sendShoppingList);
+    $("planBtn").addEventListener("click", () => {
+      const r = currentSheetRecipe;
+      if (!r) return;
+      const key = armedDate || todayISO();
+      if (plan[key] === r.id) delete plan[key]; else plan[key] = r.id;
+      save(STORAGE_KEYS.plan, plan);
+      const set = plan[key] === r.id;
+      announce(set ? r.name + " planned for " + prettyDate(key) : "Removed from " + prettyDate(key));
+      armedDate = null;
+      refreshPlanButton();
+      renderPlan();
+      renderToday();
+    });
 
     document.addEventListener("keydown", e => {
       if (!$("sheetScrim").classList.contains("open")) return;
@@ -681,6 +792,19 @@
     const first = f[0], last = f[f.length - 1];
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+
+  function refreshPlanButton() {
+    const r = currentSheetRecipe;
+    if (!r) return;
+    const key = armedDate || todayISO();
+    const btn = $("planBtn"), lbl = $("planBtnLabel");
+    const already = plan[key] === r.id;
+    lbl.textContent = already ? "Planned" : (armedDate ? prettyDate(key) : "Today");
+    btn.classList.toggle("is-planned", already);
+    btn.setAttribute("aria-label", already
+      ? "Remove from " + prettyDate(key)
+      : "Plan this for " + prettyDate(key));
   }
 
   function refreshSheetFooter() {
@@ -704,7 +828,9 @@
 
     $("sheetImg").src = recipe.image;
     $("sheetImg").alt = recipe.name;
-    $("sheetSource").textContent = recipe.source + " · " + recipe.category + " · " + recipe.cuisine;
+    $("sheetSource").textContent = [recipe.source, recipe.meals[0], recipe.cuisine].filter(Boolean).join(" · ");
+    const t = $("sheetTime");
+    if (recipe.time) { t.hidden = false; t.textContent = "· " + fmtTime(recipe.time); } else t.hidden = true;
     $("sheetName").textContent = recipe.name;
     $("sheetBarTitle").textContent = recipe.name;
     $("sheetBar").classList.remove("show");
@@ -770,7 +896,36 @@
       list.appendChild(li);
     });
 
+    // Method: a checklist you tick off at the hob. Progress is remembered
+    // per recipe so you can put the phone down mid-cook.
+    const steps = recipe.steps || [];
+    const stepList = $("stepList");
+    stepList.innerHTML = "";
+    $("methodHead").hidden = steps.length === 0;
+    $("stepsCount").textContent = steps.length ? steps.length + " steps" : "";
+    const doneSet = new Set(stepsDone[recipe.id] || []);
+    steps.forEach((text, idx) => {
+      const li = document.createElement("li");
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "step";
+      b.setAttribute("aria-pressed", doneSet.has(idx) ? "true" : "false");
+      b.innerHTML = '<span class="step-num"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="step-text"></span>';
+      b.querySelector(".step-text").textContent = text;
+      b.addEventListener("click", () => {
+        const now = b.getAttribute("aria-pressed") !== "true";
+        b.setAttribute("aria-pressed", now ? "true" : "false");
+        const set = new Set(stepsDone[recipe.id] || []);
+        if (now) set.add(idx); else set.delete(idx);
+        stepsDone[recipe.id] = [...set];
+        save(STORAGE_KEYS.stepsDone, stepsDone);
+      });
+      li.appendChild(b);
+      stepList.appendChild(li);
+    });
+
     refreshSheetFooter();
+    refreshPlanButton();
     $("sheetScrim").classList.add("open");
     $("sheet").querySelector(".sheet-scroll").scrollTop = 0;
     // the scrim goes visibility:hidden -> visible on this class change; wait for
